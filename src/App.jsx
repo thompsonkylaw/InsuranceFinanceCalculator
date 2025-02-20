@@ -15,11 +15,12 @@ const theme = createTheme({
 });
 
 const initialPremiumInput = {
-  premium: 2400000,
-  loanRate: 72,
+  premium: 1000000,
+  loanRate: 80,
   loadAmount: 1782000,
-  firstYearBonus: 120000,  // Fixed typo (Bouns → Bonus)
-  principal: 552000
+  firstYearBonus: 50000,  // Fixed typo (Bouns → Bonus)
+  principal: 100000,
+  firstDateCashValue: 900000
 };
 
 const App = () => {

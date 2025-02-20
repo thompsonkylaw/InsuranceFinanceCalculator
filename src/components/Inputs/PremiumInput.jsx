@@ -1,63 +1,71 @@
-import React from 'react';
+// PremiumInput.jsx
+import React, { useState } from 'react';
 import { Box, Card, CardContent, TextField, Button, IconButton, InputAdornment } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import LoanAmountForm from './LoanAmountForm';
 
 const PremiumInput = ({ inputs, setInputs }) => {
-  // Calculate derived values
+  const [dialogOpen, setDialogOpen] = useState(false);
   const loanAmount = Math.round((inputs.premium * inputs.loanRate) / 100);
-  const calculatedPrincipal = inputs.premium - loanAmount - inputs.firstYearBonus;
 
-  const formatCurrency = (value) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      maximumFractionDigits: 0,
+  const formatCurrency = (value) => 
+    new Intl.NumberFormat('en-US', { 
+      style: 'currency', 
+      currency: 'USD', 
+      maximumFractionDigits: 0 
     }).format(isNaN(value) ? 0 : value);
+
+  const parseCurrency = (value) => parseInt(value.replace(/\D/g, ''), 10) || 0;
+
+  // Generic handler for direct edits
+  const handleDirectEdit = (field) => (e) => {
+    const numericValue = parseCurrency(e.target.value);
+    const newInputs = { ...inputs, [field]: numericValue };
+  
+    if (field === 'loanRate') {
+      // Correct formula: Principal = Premium - Loan Amount - First Year Bonus
+      const newLoanAmount = Math.round((newInputs.premium * numericValue) / 100);
+      newInputs.principal = newInputs.premium - newLoanAmount - newInputs.firstYearBonus;
+    } 
+    else if (field === 'firstYearBonus') {
+      // Correct formula: Principal = Premium - Loan Amount - First Year Bonus
+      const newLoanAmount = Math.round((newInputs.premium * newInputs.loanRate) / 100);
+      newInputs.principal = newInputs.premium - newLoanAmount - numericValue;
+    } 
+    else if (field === 'principal') {
+      // Correct formula: Loan Amount = Premium - Principal - First Year Bonus
+      const newLoanAmount = newInputs.premium - numericValue - newInputs.firstYearBonus;
+      newInputs.loanRate = Math.round((newLoanAmount / newInputs.premium) * 100) || 0;
+    } 
+    else if (field === 'premium') {
+      // Correct formula: Loan Amount and Principal should be recalculated
+      const newLoanAmount = Math.round((numericValue * newInputs.loanRate) / 100);
+      newInputs.principal = numericValue - newLoanAmount - newInputs.firstYearBonus;
+    }
+  
+    setInputs(newInputs);
   };
+  
 
-  // Handle changes for premium and firstYearBonus
-  const handleDirectChange = (field) => (e) => {
-    const rawValue = e.target.value.replace(/\D/g, '');
-    const numericValue = parseInt(rawValue, 10) || 0;
-    
-    setInputs(prev => ({
-      ...prev,
-      [field]: numericValue,
-      principal: prev.principal === undefined ? 
-        prev.premium - (prev.premium * prev.loanRate)/100 - prev.firstYearBonus :
-        prev.principal
-    }));
-  };
-
-  // Handle loan rate changes
-  const handleLoanRateChange = (e) => {
-    const rawValue = e.target.value.replace(/\D/g, '');
-    const numericValue = Math.min(100, parseInt(rawValue, 10) || 0);
-    
-    setInputs(prev => ({
-      ...prev,
-      loanRate: numericValue,
-      principal: prev.premium - (prev.premium * numericValue)/100 - prev.firstYearBonus
-    }));
-  };
-
-  // Handle principal changes
-  const handlePrincipalChange = (e) => {
-    const rawValue = e.target.value.replace(/\D/g, '');
-    const numericValue = parseInt(rawValue, 10) || 0;
-    
-    // Calculate new loan rate based on principal input
-    const newLoanRate = Math.min(100, Math.max(0,((inputs.premium - inputs.firstYearBonus - numericValue) / inputs.premium * 100)));
-
+  const handleLoanAmountUpdate = (newLoanAmount) => {
+    const newLoanRate = Math.round((newLoanAmount / inputs.premium) * 100) || 0;
     setInputs(prev => ({
       ...prev,
       loanRate: newLoanRate,
-      principal: numericValue
+      principal: prev.premium - newLoanAmount - prev.firstYearBonus
     }));
   };
 
   return (
     <Box display="grid" gap={1}>
+      <LoanAmountForm
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        premium={inputs.firstDateCashValue}
+        initialLoanAmount={loanAmount}
+        onSave={handleLoanAmountUpdate}
+      />
+
       <Card elevation={1}>
         <CardContent>
           <Box display="grid" gap={1} sx={{ gridTemplateColumns: { xs: '1fr', md: 'repeat(4, 1fr)' } }}>
@@ -68,14 +76,17 @@ const PremiumInput = ({ inputs, setInputs }) => {
                 label="Premium"
                 variant="standard"
                 value={formatCurrency(inputs.premium)}
-                onChange={handleDirectChange('premium')}
+                onChange={handleDirectEdit('premium')}
                 inputProps={{ 'aria-label': 'Premium input' }}
               />
             </Box>
 
             {/* Loan Percentage Input */}
             <Box position="relative">
-              <IconButton sx={{ position: 'absolute', top: 0, right: 0, p: '5px', zIndex: 1 }}>
+              <IconButton 
+                sx={{ position: 'absolute', top: 0, right: 0, p: '5px', zIndex: 1 }}
+                onClick={() => setDialogOpen(true)}
+              >
                 <EditIcon fontSize="small" />
               </IconButton>
               <TextField
@@ -90,7 +101,7 @@ const PremiumInput = ({ inputs, setInputs }) => {
                 }
                 variant="standard"
                 value={`${inputs.loanRate}%`}
-                onChange={handleLoanRateChange}
+                onChange={handleDirectEdit('loanRate')}
                 inputProps={{ 'aria-label': 'Loan percentage input' }}
                 InputProps={{
                   endAdornment: (
@@ -109,7 +120,7 @@ const PremiumInput = ({ inputs, setInputs }) => {
                 label="1st Year Bonus"
                 variant="standard"
                 value={formatCurrency(inputs.firstYearBonus)}
-                onChange={handleDirectChange('firstYearBonus')}
+                onChange={handleDirectEdit('firstYearBonus')}
                 inputProps={{ 'aria-label': 'First year bonus input' }}
               />
             </Box>
@@ -120,8 +131,8 @@ const PremiumInput = ({ inputs, setInputs }) => {
                 fullWidth
                 label="Principal"
                 variant="standard"
-                value={formatCurrency(inputs.principal ?? calculatedPrincipal)}
-                onChange={handlePrincipalChange}
+                value={formatCurrency(inputs.principal)}
+                onChange={handleDirectEdit('principal')}
                 inputProps={{ 'aria-label': 'Principal input' }}
               />
             </Box>

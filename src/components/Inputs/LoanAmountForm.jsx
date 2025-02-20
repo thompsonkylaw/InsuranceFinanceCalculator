@@ -5,20 +5,23 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Button,
   TextField,
+  Button,
   Grid,
   Typography
 } from '@mui/material';
 
-const LoanAmountForm = ({ open, onClose, premium, onSave }) => {
+const LoanAmountForm = ({ open, onClose, premium, initialLoanAmount, onSave }) => {
   const [cashValue, setCashValue] = useState(premium);
   const [loanRatio, setLoanRatio] = useState(90);
 
-  // Initialize values when premium changes
   useEffect(() => {
-    setCashValue(premium);
-  }, [premium]);
+    if (open && premium > 0) {
+      const initialRatio = Math.round((initialLoanAmount / premium) * 100);
+      setLoanRatio(initialRatio || 0);
+      setCashValue(premium);
+    }
+  }, [open, premium, initialLoanAmount]);
 
   const formatCurrency = (value) => 
     new Intl.NumberFormat('en-US', { 
@@ -29,11 +32,7 @@ const LoanAmountForm = ({ open, onClose, premium, onSave }) => {
 
   const parseCurrency = (value) => parseInt(value.replace(/\D/g, ''), 10) || 0;
 
-  const calculateLoanAmount = () => {
-    const cv = parseCurrency(cashValue);
-    const lr = parseFloat(loanRatio) || 0;
-    return Math.round(cv * (lr / 100));
-  };
+  const calculateLoanAmount = () => Math.round(cashValue * (loanRatio / 100));
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
@@ -54,7 +53,7 @@ const LoanAmountForm = ({ open, onClose, premium, onSave }) => {
             <TextField
               fullWidth
               label="Bank Loan Ratio"
-              value={`${loanRatio}%`}
+              value={`${isNaN(loanRatio) ? 0 : loanRatio}%`}
               onChange={(e) => {
                 const value = Math.min(100, parseInt(e.target.value.replace(/\D/g, ''), 10) || 0);
                 setLoanRatio(value);
