@@ -1,11 +1,13 @@
 // PremiumInput.jsx
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Box, Card, CardContent, TextField, Button, IconButton, InputAdornment } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import LoanAmountForm from './LoanAmountForm';
 
 const PremiumInput = ({ inputs, setInputs }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const editButtonRef = useRef(null);
+
   const loanAmount = Math.round((inputs.premium * inputs.loanRate) / 100);
 
   const formatCurrency = (value) => 
@@ -16,7 +18,7 @@ const PremiumInput = ({ inputs, setInputs }) => {
     }).format(isNaN(value) ? 0 : value);
 
   const parseCurrency = (value) => parseInt(value.replace(/\D/g, ''), 10) || 0;
-
+  
   // Generic handler for direct edits
   const handleDirectEdit = (field) => (e) => {
     const numericValue = parseCurrency(e.target.value);
@@ -46,23 +48,39 @@ const PremiumInput = ({ inputs, setInputs }) => {
     setInputs(newInputs);
   };
   
-
-  const handleLoanAmountUpdate = (newLoanAmount) => {
-    const newLoanRate = Math.round((newLoanAmount / inputs.premium) * 100) || 0;
-    setInputs(prev => ({
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+    setTimeout(() => {
+      editButtonRef.current?.blur();
+    }, 0);
+  };
+const handleLoanAmountUpdate = ({ loanAmount, cashValue, loanRatio }) => {
+  setInputs(prev => {
+    console.log("loanAmount",loanAmount);
+    const preciseLoanAmount = Math.round(loanAmount); // 直接四捨五入到整數
+    console.log("preciseLoanAmount",preciseLoanAmount);
+    //const newLoanRate = prev.premium ? Math.round((preciseLoanAmount / prev.premium) * 100) : 0;
+    const newLoanRate = prev.premium ? (preciseLoanAmount / prev.premium * 100) : 0;
+   
+    return {
       ...prev,
       loanRate: newLoanRate,
-      principal: prev.premium - newLoanAmount - prev.firstYearBonus
-    }));
-  };
+      principal: prev.premium - preciseLoanAmount - prev.firstYearBonus,
+      firstDateCashValue: cashValue,
+      bankLoanRatio: loanRatio
+    };
+  });
+  handleCloseDialog();
+};
+
 
   return (
     <Box display="grid" gap={1}>
       <LoanAmountForm
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
-        premium={inputs.firstDateCashValue}
-        initialLoanAmount={loanAmount}
+        firstDateCashValue={inputs.firstDateCashValue}
+        bankLoanRatio={inputs.bankLoanRatio}
         onSave={handleLoanAmountUpdate}
       />
 
@@ -84,6 +102,7 @@ const PremiumInput = ({ inputs, setInputs }) => {
             {/* Loan Percentage Input */}
             <Box position="relative">
               <IconButton 
+                ref={editButtonRef} 
                 sx={{ position: 'absolute', top: 0, right: 0, p: '5px', zIndex: 1 }}
                 onClick={() => setDialogOpen(true)}
               >

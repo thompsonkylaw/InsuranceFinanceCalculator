@@ -20,7 +20,8 @@ const initialPremiumInput = {
   loadAmount: 1782000,
   firstYearBonus: 50000,  // Fixed typo (Bouns → Bonus)
   principal: 100000,
-  firstDateCashValue: 900000
+  firstDateCashValue: 990000,
+  bankLoanRatio:90
 };
 
 const App = () => {
@@ -38,7 +39,13 @@ const App = () => {
   useEffect(() => {
     localStorage.setItem('premiumInput', JSON.stringify(premiumInput));
   }, [premiumInput]);
-
+  
+  const combinedInputs = {
+    ...premiumInput,
+    //...userInput4,
+   // duration: userInput3.toAge - userInput3.fromAge
+  };
+  console.log("combinedInputs",combinedInputs);
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />

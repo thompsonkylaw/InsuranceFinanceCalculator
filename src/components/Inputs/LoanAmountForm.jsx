@@ -1,4 +1,3 @@
-// LoanAmountForm.jsx
 import React, { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -11,17 +10,16 @@ import {
   Typography
 } from '@mui/material';
 
-const LoanAmountForm = ({ open, onClose, premium, initialLoanAmount, onSave }) => {
-  const [cashValue, setCashValue] = useState(premium);
-  const [loanRatio, setLoanRatio] = useState(90);
+const LoanAmountForm = ({ open, onClose, firstDateCashValue, bankLoanRatio, onSave }) => {
+  const [cashValue, setCashValue] = useState(firstDateCashValue || 0);
+  const [loanRatio, setLoanRatio] = useState(bankLoanRatio || 0);
 
   useEffect(() => {
-    if (open && premium > 0) {
-      const initialRatio = Math.round((initialLoanAmount / premium) * 100);
-      setLoanRatio(initialRatio || 0);
-      setCashValue(premium);
+    if (open) {
+      setCashValue(prev => prev || firstDateCashValue);
+      setLoanRatio(prev => prev || bankLoanRatio);
     }
-  }, [open, premium, initialLoanAmount]);
+  }, [open, firstDateCashValue, bankLoanRatio]);
 
   const formatCurrency = (value) => 
     new Intl.NumberFormat('en-US', { 
@@ -74,7 +72,11 @@ const LoanAmountForm = ({ open, onClose, premium, initialLoanAmount, onSave }) =
         <Button onClick={onClose}>Cancel</Button>
         <Button 
           onClick={() => {
-            onSave(calculateLoanAmount());
+            onSave({
+              loanAmount: calculateLoanAmount(),
+              cashValue,
+              loanRatio
+            });
             onClose();
           }}
           color="primary"
