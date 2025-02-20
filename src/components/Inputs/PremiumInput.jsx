@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { Box, Card, CardContent, TextField, Button, IconButton, InputAdornment } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import LoanAmountForm from './LoanAmountForm';
@@ -7,7 +7,7 @@ const PremiumInput = ({ inputs, setInputs }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [savedLoanRate, setSavedLoanRate] = useState(inputs.loanRate); // State to store the saved loan rate
   const [isLoanRateZero, setIsLoanRateZero] = useState(false); // State to track if loan rate is toggled to 0%
-  const editButtonRef = useRef(null);
+
 
   const loanAmount = Math.round((inputs.premium * inputs.loanRate) / 100);
 
@@ -28,15 +28,18 @@ const PremiumInput = ({ inputs, setInputs }) => {
     if (field === 'loanRate') {
       const newLoanAmount = Math.round((newInputs.premium * numericValue) / 100);
       newInputs.principal = newInputs.premium - newLoanAmount - newInputs.firstYearBonus;
+      newInputs.loadAmount = newLoanAmount;
     } else if (field === 'firstYearBonus') {
       const newLoanAmount = Math.round((newInputs.premium * newInputs.loanRate) / 100);
       newInputs.principal = newInputs.premium - newLoanAmount - numericValue;
     } else if (field === 'principal') {
       const newLoanAmount = newInputs.premium - numericValue - newInputs.firstYearBonus;
       newInputs.loanRate = Math.round((newLoanAmount / newInputs.premium) * 100) || 0;
+      newInputs.loadAmount = newLoanAmount;
     } else if (field === 'premium') {
       const newLoanAmount = Math.round((numericValue * newInputs.loanRate) / 100);
       newInputs.principal = numericValue - newLoanAmount - newInputs.firstYearBonus;
+      newInputs.loadAmount = newLoanAmount;
     }
 
     setInputs(newInputs);
@@ -52,6 +55,7 @@ const PremiumInput = ({ inputs, setInputs }) => {
         ...prev,
         loanRate: savedLoanRate,
         principal: newPrincipal,
+        loadAmount: newLoanAmount,
       }));
     } else {
       // Save the current loan rate, set it to 0%, and recalculate principal
@@ -62,17 +66,12 @@ const PremiumInput = ({ inputs, setInputs }) => {
         ...prev,
         loanRate: 0,
         principal: newPrincipal,
+        loadAmount: newLoanAmount,
       }));
     }
     setIsLoanRateZero(!isLoanRateZero); // Toggle the state
   };
 
-  const handleCloseDialog = () => {
-    setDialogOpen(false);
-    setTimeout(() => {
-      editButtonRef.current?.blur();
-    }, 0);
-  };
 
   const handleLoanAmountUpdate = ({ loanAmount, cashValue, loanRatio }) => {
     setInputs((prev) => {
@@ -84,9 +83,10 @@ const PremiumInput = ({ inputs, setInputs }) => {
         principal: prev.premium - preciseLoanAmount - prev.firstYearBonus,
         firstDateCashValue: cashValue,
         bankLoanRatio: loanRatio,
+        loadAmount: preciseLoanAmount,
       };
     });
-    handleCloseDialog();
+    
   };
 
   return (
@@ -116,13 +116,15 @@ const PremiumInput = ({ inputs, setInputs }) => {
 
             {/* Loan Percentage Input */}
             <Box position="relative">
-              <IconButton
-                ref={editButtonRef}
-                sx={{ position: 'absolute', top: 0, right: 0, p: '5px', zIndex: 1 }}
-                onClick={() => setDialogOpen(true)}
-              >
-                <EditIcon fontSize="small" />
-              </IconButton>
+            <IconButton
+  sx={{ position: 'absolute', top: 0, right: 0, p: '5px', zIndex: 1 }}
+  onClick={(event) => {
+    setDialogOpen(true);
+    event.currentTarget.blur(); // 失去焦點
+  }}
+>
+  <EditIcon fontSize="small" />
+</IconButton>
               <TextField
                 fullWidth
                 label={
