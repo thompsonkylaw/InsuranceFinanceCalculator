@@ -4,6 +4,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import PremiumInput from './components/Inputs/PremiumInput';
 import BankInterest from './components/Inputs/BankInterest';
 import TermsAndCashValue from './components/Inputs/TermsAndCashValue';
+import TermsTable from './components/Inputs/TermsTable';
 
 // Create theme outside component
 const theme = createTheme({
@@ -19,7 +20,7 @@ const theme = createTheme({
 const initialPremiumInput = {
   premium: 1000000,
   loanRate: 80,
-  loadAmount: 1782000,
+  loanAmount: 800000,
   firstYearBonus: 50000,  // Fixed typo (Bouns → Bonus)
   principal: 100000,
   firstDateCashValue: 990000,
@@ -84,6 +85,15 @@ const App = () => {
           
         />
       </div>
+
+      <div style={{ padding: '16px' }}>
+      <TermsTable 
+        termsAndCashValue={termsAndCashValue}
+        premiumInput={premiumInput}
+        BankInterest={bankInterestInput}
+       />
+      </div>
+  
     </ThemeProvider>
   );
 };
