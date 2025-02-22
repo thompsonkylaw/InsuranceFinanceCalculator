@@ -3,6 +3,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import PremiumInput from './components/Inputs/PremiumInput';
 import BankInterest from './components/Inputs/BankInterest';
+import TermsAndCashValue from './components/Inputs/TermsAndCashValue';
 
 // Create theme outside component
 const theme = createTheme({
@@ -31,6 +32,11 @@ const initialBankInterestInput = {
   
 };
 
+const initialTermsAndCashValue = {
+  term: [5,10,15],
+  cashValue: [100000,200000,300000]
+};
+
 const App = () => {
   // Move state inside component
   const [premiumInput, setPremiumInput] = useState(() => {
@@ -38,9 +44,10 @@ const App = () => {
   });  
   const [bankInterestInput, setBankInterestInput] = useState(() => {
       return initialBankInterestInput;  
-
   });
-
+  const [termsAndCashValue, setTermsAndCashValue] = useState(() => {
+    return initialTermsAndCashValue;  
+});
   useEffect(() => {
     localStorage.setItem('premiumInput', JSON.stringify(premiumInput));
   }, [premiumInput]);
@@ -50,6 +57,7 @@ const App = () => {
   const combinedInputs = {
     ...premiumInput,
     ...bankInterestInput,
+    ...termsAndCashValue,
    // duration: userInput3.toAge - userInput3.fromAge
   };
   console.log("combinedInputs",combinedInputs);
@@ -67,6 +75,13 @@ const App = () => {
           inputs={bankInterestInput}
           setInputs={setBankInterestInput}
           loanAmount={premiumInput.loadAmount || 0} // Make sure this matches your data structure
+        />
+      </div>
+      <div style={{ padding: '16px' }}>
+        <TermsAndCashValue 
+          inputs={termsAndCashValue}
+          setInputs={setTermsAndCashValue}
+          
         />
       </div>
     </ThemeProvider>
