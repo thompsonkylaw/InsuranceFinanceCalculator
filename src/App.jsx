@@ -98,7 +98,7 @@ const App = () => {
                 <BankInterest 
                   inputs={bankInterestInput}
                   setInputs={setBankInterestInput}
-                  loanAmount={premiumInput.loadAmount || 0}
+                  loanAmount={premiumInput.loanAmount || 0}
                 />
               </Grid>
               <Grid item sx={{ display: { xs: 'block', md: 'none' } }}>
@@ -135,7 +135,7 @@ const App = () => {
                 <BankInterest 
                   inputs={bankInterestInput}
                   setInputs={setBankInterestInput}
-                  loanAmount={premiumInput.loadAmount || 0}
+                  loanAmount={premiumInput.loanAmount || 0}
                 />
               </Grid>
               <Grid item>
