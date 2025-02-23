@@ -22,7 +22,8 @@ const ReturnChart = ({ termsData, premiumInput, tableData }) => {
 
   const colors = {
     Principal: 'rgb(57, 102, 248)',
-    LoanAmount: 'rgb(102, 94, 255)',
+    //LoanAmount: 'rgb(102, 94, 255)',
+    LoanAmount: 'rgb(255, 165, 0)',
     TotalExpense: 'rgb(255, 192, 0)',
     Return: 'rgb(15, 175, 63)'
   };
@@ -111,7 +112,7 @@ const ReturnChart = ({ termsData, premiumInput, tableData }) => {
             datalabels: {
               display: true,
               color: function(context) {
-                return context.datasetIndex === 2 ? 'black' : 'white';
+                return context.datasetIndex === 2 ? 'white' : 'white';
               },
               anchor: 'center',
               align: 'center',
