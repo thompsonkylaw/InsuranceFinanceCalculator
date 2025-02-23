@@ -5,6 +5,8 @@ import PremiumInput from './components/Inputs/PremiumInput';
 import BankInterest from './components/Inputs/BankInterest';
 import TermsAndCashValue from './components/Inputs/TermsAndCashValue';
 import TermsTable from './components/Inputs/TermsTable';
+import ReturnChart  from './components/Inputs/ReturnChart';
+
 
 // Create theme outside component
 const theme = createTheme({
@@ -18,12 +20,12 @@ const theme = createTheme({
 });
 
 const initialPremiumInput = {
-  premium: 1000000,
-  loanRate: 80,
-  loanAmount: 800000,
-  firstYearBonus: 50000,  // Fixed typo (Bouns → Bonus)
-  principal: 100000,
-  firstDateCashValue: 990000,
+  premium: 2400000,
+  loanRate: 72,
+  loanAmount: 1728000,
+  firstYearBonus: 120000,  // Fixed typo (Bouns → Bonus)
+  principal: 552000,
+  firstDateCashValue: 1920000,
   bankLoanRatio:90,
 };
 
@@ -35,7 +37,14 @@ const initialBankInterestInput = {
 
 const initialTermsAndCashValue = {
   term: [5,10,15],
-  cashValue: [100000,200000,300000]
+  cashValue: [2654933,3672432,5077716]
+};
+
+const initialTableData = {
+  totalExpense: [346000,691000,1040000],
+  netCash:[927000,1940000,3350000],
+  returnInDollar:[293000,701000,1761000],
+  returnRate:[5.31,127.03,319.01],
 };
 
 const App = () => {
@@ -48,7 +57,12 @@ const App = () => {
   });
   const [termsAndCashValue, setTermsAndCashValue] = useState(() => {
     return initialTermsAndCashValue;  
-});
+  });
+  const [tableData, settableData] = useState(() => {
+    return initialTableData;  
+  });
+
+
   useEffect(() => {
     localStorage.setItem('premiumInput', JSON.stringify(premiumInput));
   }, [premiumInput]);
@@ -59,6 +73,7 @@ const App = () => {
     ...premiumInput,
     ...bankInterestInput,
     ...termsAndCashValue,
+    ...tableData,
    // duration: userInput3.toAge - userInput3.fromAge
   };
   console.log("combinedInputs",combinedInputs);
@@ -90,10 +105,19 @@ const App = () => {
       <TermsTable 
         termsAndCashValue={termsAndCashValue}
         premiumInput={premiumInput}
-        BankInterest={bankInterestInput}
+        bankInterest={bankInterestInput}
+        tableData={tableData}
+        setInputs={settableData}
        />
       </div>
-  
+      <div style={{ padding: '16px' }}>
+      <ReturnChart 
+        premiumInput={premiumInput}
+        termsData={termsAndCashValue}
+        
+        tableData={tableData}
+      />
+      </div>
     </ThemeProvider>
   );
 };
