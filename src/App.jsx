@@ -5,10 +5,8 @@ import PremiumInput from './components/Inputs/PremiumInput';
 import BankInterest from './components/Inputs/BankInterest';
 import TermsAndCashValue from './components/Inputs/TermsAndCashValue';
 import TermsTable from './components/Inputs/TermsTable';
-import ReturnChart  from './components/Inputs/ReturnChart';
+import ReturnChart from './components/Inputs/ReturnChart';
 
-
-// Create theme outside component
 const theme = createTheme({
   palette: {
     primary: { main: '#1976d2' },
@@ -17,6 +15,15 @@ const theme = createTheme({
   typography: {
     fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
   },
+  components: {
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          overflow: 'visible' // Ensures cards can expand properly
+        }
+      }
+    }
+  }
 });
 
 const initialPremiumInput = {
@@ -80,28 +87,33 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box sx={{ p: 3 }}>
-        <Grid container spacing={3}>
+      <Box sx={{ 
+        p: { xs: 1, md: 3 },
+        minHeight: '100vh',
+        backgroundColor: 'background.default'
+      }}>
+        <Grid container spacing={{ xs: 0, md: 3 }}> {/* Remove spacing on mobile */}
           {/* Mobile & Desktop Structure */}
           <Grid item xs={12} md={9}>
-            <Grid container direction="column" spacing={3}>
-              {/* Always visible components */}
+            <Grid container direction="column" spacing={{ xs: 2, md: 3 }}>
               <Grid item>
-                <PremiumInput 
-                  inputs={premiumInput}
-                  setInputs={setPremiumInput}
-                />
+                <Box sx={{ width: '100%', overflow: 'hidden' }}>
+                  <PremiumInput 
+                    inputs={premiumInput}
+                    setInputs={setPremiumInput}
+                  />
+                </Box>
               </Grid>
 
               {/* Mobile-only components */}
-              <Grid item sx={{ display: { xs: 'block', md: 'none' } }}>
+              <Grid item sx={{ display: { xs: 'block', md: 'none' }, width: '100%' }}>
                 <BankInterest 
                   inputs={bankInterestInput}
                   setInputs={setBankInterestInput}
                   loanAmount={premiumInput.loanAmount || 0}
                 />
               </Grid>
-              <Grid item sx={{ display: { xs: 'block', md: 'none' } }}>
+              <Grid item sx={{ display: { xs: 'block', md: 'none' }, width: '100%' }}>
                 <TermsAndCashValue 
                   inputs={termsAndCashValue}
                   setInputs={setTermsAndCashValue}
@@ -109,14 +121,14 @@ const App = () => {
               </Grid>
 
               {/* Chart and Table */}
-              <Grid item>
+              <Grid item sx={{ width: '100%' }}>
                 <ReturnChart 
                   premiumInput={premiumInput}
                   termsData={termsAndCashValue}
                   tableData={tableData}
                 />
               </Grid>
-              <Grid item>
+              <Grid item sx={{ width: '100%' }}>
                 <TermsTable 
                   termsAndCashValue={termsAndCashValue}
                   premiumInput={premiumInput}
@@ -129,7 +141,10 @@ const App = () => {
           </Grid>
 
           {/* Desktop-only right column */}
-          <Grid item xs={12} md={3} sx={{ display: { xs: 'none', md: 'block' } }}>
+          <Grid item xs={12} md={3} sx={{ 
+            display: { xs: 'none', md: 'block' },
+            position: 'relative'
+          }}>
             <Grid container direction="column" spacing={3}>
               <Grid item>
                 <BankInterest 
