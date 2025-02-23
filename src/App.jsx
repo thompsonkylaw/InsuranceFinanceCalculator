@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider, createTheme, Grid, Box } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import PremiumInput from './components/Inputs/PremiumInput';
 import BankInterest from './components/Inputs/BankInterest';
@@ -80,44 +80,74 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <div style={{ padding: '16px' }}>
-        <PremiumInput 
-          inputs={premiumInput}
-          setInputs={setPremiumInput}
-        />
-      </div>
-      <div style={{ padding: '16px' }}>
-        <BankInterest 
-          inputs={bankInterestInput}
-          setInputs={setBankInterestInput}
-          loanAmount={premiumInput.loadAmount || 0} // Make sure this matches your data structure
-        />
-      </div>
-      <div style={{ padding: '16px' }}>
-        <TermsAndCashValue 
-          inputs={termsAndCashValue}
-          setInputs={setTermsAndCashValue}
-          
-        />
-      </div>
+      <Box sx={{ p: 3 }}>
+        <Grid container spacing={3}>
+          {/* Mobile & Desktop Structure */}
+          <Grid item xs={12} md={9}>
+            <Grid container direction="column" spacing={3}>
+              {/* Always visible components */}
+              <Grid item>
+                <PremiumInput 
+                  inputs={premiumInput}
+                  setInputs={setPremiumInput}
+                />
+              </Grid>
 
-      <div style={{ padding: '16px' }}>
-      <TermsTable 
-        termsAndCashValue={termsAndCashValue}
-        premiumInput={premiumInput}
-        bankInterest={bankInterestInput}
-        tableData={tableData}
-        setInputs={settableData}
-       />
-      </div>
-      <div style={{ padding: '16px' }}>
-      <ReturnChart 
-        premiumInput={premiumInput}
-        termsData={termsAndCashValue}
-        
-        tableData={tableData}
-      />
-      </div>
+              {/* Mobile-only components */}
+              <Grid item sx={{ display: { xs: 'block', md: 'none' } }}>
+                <BankInterest 
+                  inputs={bankInterestInput}
+                  setInputs={setBankInterestInput}
+                  loanAmount={premiumInput.loadAmount || 0}
+                />
+              </Grid>
+              <Grid item sx={{ display: { xs: 'block', md: 'none' } }}>
+                <TermsAndCashValue 
+                  inputs={termsAndCashValue}
+                  setInputs={setTermsAndCashValue}
+                />
+              </Grid>
+
+              {/* Chart and Table */}
+              <Grid item>
+                <ReturnChart 
+                  premiumInput={premiumInput}
+                  termsData={termsAndCashValue}
+                  tableData={tableData}
+                />
+              </Grid>
+              <Grid item>
+                <TermsTable 
+                  termsAndCashValue={termsAndCashValue}
+                  premiumInput={premiumInput}
+                  bankInterest={bankInterestInput}
+                  tableData={tableData}
+                  setInputs={settableData}
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+
+          {/* Desktop-only right column */}
+          <Grid item xs={12} md={3} sx={{ display: { xs: 'none', md: 'block' } }}>
+            <Grid container direction="column" spacing={3}>
+              <Grid item>
+                <BankInterest 
+                  inputs={bankInterestInput}
+                  setInputs={setBankInterestInput}
+                  loanAmount={premiumInput.loadAmount || 0}
+                />
+              </Grid>
+              <Grid item>
+                <TermsAndCashValue 
+                  inputs={termsAndCashValue}
+                  setInputs={setTermsAndCashValue}
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Box>
     </ThemeProvider>
   );
 };
