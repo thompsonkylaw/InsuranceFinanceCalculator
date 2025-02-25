@@ -21,6 +21,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           overflow: 'visible' // Ensures cards can expand properly
+          
         }
       }
     }

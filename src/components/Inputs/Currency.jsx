@@ -49,7 +49,7 @@ const Currency = ({ switch: isHkd, setInputs }) => {
                         </Grid> */}
                         <Grid item>
                           <Typography variant="body1" color="textSecondary" style={{ fontSize: 14 }}>
-                            {isHkd ? 'HKD' : 'USD'}
+                            Display Currency: {isHkd ? 'HKD' : 'USD'}
                           </Typography>
                         </Grid>
                       </Grid>
