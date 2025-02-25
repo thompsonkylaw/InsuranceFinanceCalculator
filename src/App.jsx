@@ -39,7 +39,6 @@ const initialPremiumInput = {
 const initialBankInterestInput = {
   loanInterest: 4,
   monthlyInterestPayment: 0,
-  
 };
 
 const initialTermsAndCashValue = {
@@ -53,6 +52,8 @@ const initialTableData = {
   returnInDollar:[293000,701000,1761000],
   returnRate:[5.31,127.03,319.01],
 };
+
+
 
 const App = () => {
   // Move state inside component
