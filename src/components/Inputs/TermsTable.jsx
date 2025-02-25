@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import { ExpandMore, ExpandLess } from '@mui/icons-material';
 
-const TermsTable = ({ termsAndCashValue, premiumInput, bankInterest, tableData, setInputs }) => {
+const TermsTable = ({ termsAndCashValue, premiumInput, bankInterest, tableData, setInputs, currencySwitch }) => {
   const [expandedRow, setExpandedRow] = useState(null);
 
   useEffect(() => {
@@ -72,9 +72,17 @@ const TermsTable = ({ termsAndCashValue, premiumInput, bankInterest, tableData, 
     if (event) event.currentTarget.blur();
   };
 
+
   const formatNumber = (num) => {
-    return num > 999 ? Math.round(num/1000).toLocaleString() + 'K' : Math.round(num).toLocaleString();
+    let value = currencySwitch ? num * 7.8 : num;
+    const formatted = value > 999 ? 
+      Math.round(value/1000).toLocaleString() + 'K' : 
+      Math.round(value).toLocaleString();
+    return currencySwitch ? `HK${formatted}` : formatted;
   };
+
+
+
 
   return (
     <Card>

@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-const BankInterest = ({ inputs, setInputs, loanAmount }) => {
+const BankInterest = ({ inputs, setInputs, loanAmount,currencySwitch }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [localLoanInterest, setLocalLoanInterest] = useState(inputs.loanInterest);
 
@@ -53,9 +53,8 @@ const BankInterest = ({ inputs, setInputs, loanAmount }) => {
   };
 
   return (
-    <Card sx={{ p: 2, borderRadius: 3, boxShadow: 3, maxWidth: 350 }}>
+    <Card sx={{ p: 2, borderRadius: 3, boxShadow: 3 }}>
       <CardContent>
-        {/* 貸款利率標題 */}
         <Grid container alignItems="center" justifyContent="space-between">
           <Grid item>
             <Typography variant="subtitle1" fontWeight="bold">
@@ -67,31 +66,37 @@ const BankInterest = ({ inputs, setInputs, loanAmount }) => {
               type="text"
               value={`${localLoanInterest}%`}
               onChange={handleInputChange}
+              disabled={currencySwitch}
               style={{
                 width: '60px',
                 border: 'none',
                 background: 'transparent',
                 fontSize: '1rem',
                 fontWeight: 'bold',
-                color: '#1976d2',
-                textAlign: 'right'
+                color: currencySwitch ? '#999' : '#1976d2',
+                textAlign: 'right',
+                cursor: currencySwitch ? 'not-allowed' : 'auto'
               }}
             />
           </Grid>
           
           <Grid item>
-            <IconButton
+          <IconButton
               size="small"
               onClick={(event) => {
                 setIsExpanded(!isExpanded);
-                event.currentTarget.blur(); // 讓按鈕失去焦點
+                event.currentTarget.blur();
               }}
               sx={{
                 transform: isExpanded ? "rotate(180deg)" : "none",
                 transition: "transform 0.3s ease",
+                // Remove currencySwitch-related styling
+                color: 'inherit',
+                cursor: 'pointer'
               }}
             >
               <ExpandMoreIcon />
+        
             </IconButton>
           </Grid>
         </Grid>
@@ -99,7 +104,9 @@ const BankInterest = ({ inputs, setInputs, loanAmount }) => {
         {/* 展開顯示的內容 */}
         {isExpanded && (
           <Typography variant="body2" sx={{ mt: 1, mb: 2 }}>
-            Monthly Interest：${inputs.monthlyInterestPayment.toFixed(2)}
+            Monthly Interest: {currencySwitch ? 'HK$' : '$'}
+            {(inputs.monthlyInterestPayment * 
+              (currencySwitch ? 7.8 : 1)).toFixed(2)}
           </Typography>
         )}
 
@@ -107,6 +114,7 @@ const BankInterest = ({ inputs, setInputs, loanAmount }) => {
         <Slider
           value={inputs.loanInterest}
           onChange={handleSliderChange}
+          disabled={currencySwitch}
           step={0.125}
           marks
           min={0.125}
@@ -115,14 +123,18 @@ const BankInterest = ({ inputs, setInputs, loanAmount }) => {
           sx={{
             "& .MuiSlider-thumb": {
               borderRadius: "50%",
-              border: "2px solid blue",
+              border: currencySwitch ? "2px solid #999" : "2px solid blue",
+              bgcolor: currencySwitch ? '#fff' : 'blue',
             },
             "& .MuiSlider-track": {
-              bgcolor: "blue",
+              bgcolor: currencySwitch ? '#999' : "blue",
             },
             "& .MuiSlider-rail": {
               bgcolor: "#d3d3d3",
             },
+            "& .Mui-disabled": {
+              cursor: 'not-allowed'
+            }
           }}
         />
       </CardContent>

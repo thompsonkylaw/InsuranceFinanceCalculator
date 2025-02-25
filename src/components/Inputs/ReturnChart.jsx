@@ -15,7 +15,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 Chart.register(ChartDataLabels);
 
-const ReturnChart = ({ termsData, premiumInput, tableData }) => {
+const ReturnChart = ({ termsData, premiumInput, tableData,currencySwitch }) => {
   const [viewMode, setViewMode] = React.useState('Return Detail');
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
@@ -26,6 +26,10 @@ const ReturnChart = ({ termsData, premiumInput, tableData }) => {
     TotalExpense: 'rgb(255, 192, 0)',
     Return: 'rgb(15, 175, 63)',
     NetCash: 'rgb(62, 199, 248)'
+  };
+
+  const convertCurrency = (value) => {
+    return currencySwitch ? value * 7.8 : value;
   };
 
   useEffect(() => {
@@ -99,7 +103,13 @@ const ReturnChart = ({ termsData, premiumInput, tableData }) => {
         }
       }
 
-      const chartData = { labels, datasets };
+      const chartData = {
+        labels,
+        datasets: datasets.map(dataset => ({
+          ...dataset,
+          data: dataset.data.map(value => convertCurrency(value))
+        }))
+      };
 
       chartInstance.current = new Chart(ctx, {
         type: 'bar',
@@ -114,8 +124,13 @@ const ReturnChart = ({ termsData, premiumInput, tableData }) => {
             },
             y: {
               stacked: true,
-              title: { display: true, text: 'Amount (USD)' },
-              ticks: { callback: (value) => `${Math.abs(value/1000).toFixed(0)}K` }
+              title: { 
+                display: true, 
+                text: currencySwitch ? 'Amount (HKD)' : 'Amount (USD)'
+              },
+              ticks: { 
+                callback: (value) => `${Math.abs(value/1000).toFixed(0)}K` 
+              }
             }
           },
           plugins: {
@@ -124,7 +139,8 @@ const ReturnChart = ({ termsData, premiumInput, tableData }) => {
                 label: (context) => {
                   const label = context.dataset.label || '';
                   const value = context.raw >= 0 ? context.raw : -context.raw;
-                  return `${label}: $${Math.round(value/1000)}K`;
+                  const symbol = currencySwitch ? 'HK$' : '$';
+                  return `${label}: ${symbol}${Math.round(value/1000)}K`;
                 }
               }
             },
@@ -157,7 +173,7 @@ const ReturnChart = ({ termsData, premiumInput, tableData }) => {
         chartInstance.current.destroy();
       }
     };
-  }, [termsData, premiumInput, tableData, viewMode]);
+  }, [termsData, premiumInput, tableData, viewMode,currencySwitch]);
 
   return (
     <Card>

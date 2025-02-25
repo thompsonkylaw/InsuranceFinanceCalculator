@@ -3,7 +3,7 @@ import { Box, Card, CardContent, TextField, Button, IconButton, InputAdornment }
 import EditIcon from '@mui/icons-material/Edit';
 import LoanAmountForm from './LoanAmountForm';
 
-const PremiumInput = ({ inputs, setInputs }) => {
+const PremiumInput = ({ inputs, setInputs,currencySwitch }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [savedLoanRate, setSavedLoanRate] = useState(inputs.loanRate); // State to store the saved loan rate
   const [isLoanRateZero, setIsLoanRateZero] = useState(false); // State to track if loan rate is toggled to 0%
@@ -11,12 +11,17 @@ const PremiumInput = ({ inputs, setInputs }) => {
 
   const loanAmount = Math.round((inputs.premium * inputs.loanRate) / 100);
 
-  const formatCurrency = (value) =>
-    new Intl.NumberFormat('en-US', {
+  const formatCurrency = (value) => {
+    // Convert value based on currency switch
+    const convertedValue = currencySwitch ? value * 7.8 : value;
+    
+    return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'USD',
+      currency: currencySwitch ? 'HKD' : 'USD',
       maximumFractionDigits: 0,
-    }).format(isNaN(value) ? 0 : value);
+    }).format(isNaN(convertedValue) ? 0 : convertedValue);
+  };
+
 
   const parseCurrency = (value) => parseInt(value.replace(/\D/g, ''), 10) || 0;
 
@@ -89,99 +94,143 @@ const PremiumInput = ({ inputs, setInputs }) => {
     
   };
 
-  return (
-    <Box display="grid" gap={1}>
-      <LoanAmountForm
-        open={dialogOpen}
-        onClose={() => setDialogOpen(false)}
-        firstDateCashValue={inputs.firstDateCashValue}
-        bankLoanRatio={inputs.bankLoanRatio}
-        onSave={handleLoanAmountUpdate}
-      />
 
-      <Card elevation={1}>
-        <CardContent>
-          <Box display="grid" gap={1} sx={{ gridTemplateColumns: { xs: '1fr', md: 'repeat(4, 1fr)' } }}>
-            {/* Premium Input */}
-            <Box>
-              <TextField
-                fullWidth
-                label="Premium"
-                variant="standard"
-                value={formatCurrency(inputs.premium)}
-                onChange={handleDirectEdit('premium')}
-                inputProps={{ 'aria-label': 'Premium input' }}
-              />
+  
+    return (
+      <Box display="grid" gap={1}>
+        <Card elevation={1}>
+          <CardContent>
+            <Box display="grid" gap={1} sx={{ gridTemplateColumns: { xs: '1fr', md: 'repeat(4, 1fr)' } }}>
+              {/* Premium Input */}
+              <Box>
+                <TextField
+                  fullWidth
+                  label="Premium"
+                  variant="standard"
+                  value={formatCurrency(inputs.premium)}
+                  onChange={handleDirectEdit('premium')}
+                  InputProps={{
+                    readOnly: currencySwitch,
+                  }}
+                  sx={{
+                    '& .MuiInputBase-input.Mui-disabled': {
+                      WebkitTextFillColor: 'inherit',
+                      opacity: 1,
+                    },
+                  }}
+                  inputProps={{ 'aria-label': 'Premium input' }}
+                />
+              </Box>
+  
+              {/* Loan Percentage Input */}
+              <Box position="relative">
+                <IconButton
+                  sx={{ 
+                    position: 'absolute', 
+                    top: 0, 
+                    right: 0, 
+                    p: '5px', 
+                    zIndex: 1,
+                    cursor: currencySwitch ? 'not-allowed' : 'pointer'
+                  }}
+                  onClick={(event) => {
+                    if (!currencySwitch) {
+                      setDialogOpen(true);
+                      event.currentTarget.blur();
+                    }
+                  }}
+                  disabled={currencySwitch}
+                >
+                  <EditIcon fontSize="small" />
+                </IconButton>
+                <TextField
+                  fullWidth
+                  label={
+                    <Box display="flex" alignItems="center" gap={0.5}>
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        sx={{ 
+                          p: '2px', 
+                          minWidth: 0, 
+                          lineHeight: 1,
+                          cursor: currencySwitch ? 'not-allowed' : 'pointer'
+                        }}
+                        onClick={currencySwitch ? undefined : handleLoanRateToggle}
+                        disabled={currencySwitch}
+                      >
+                        Loan %
+                      </Button>
+                      <span>(Amount)</span>
+                    </Box>
+                  }
+                  variant="standard"
+                  value={`${inputs.loanRate}%`}
+                  onChange={handleDirectEdit('loanRate')}
+                  InputProps={{
+                    readOnly: currencySwitch,
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        ({formatCurrency(loanAmount)})
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{
+                    '& .MuiInputBase-input.Mui-disabled': {
+                      WebkitTextFillColor: 'inherit',
+                      opacity: 1,
+                    },
+                  }}
+                  inputProps={{ 'aria-label': 'Loan percentage input' }}
+                />
+              </Box>
+  
+              {/* 1st Year Bonus Input */}
+              <Box>
+                <TextField
+                  fullWidth
+                  label="1st Year Bonus"
+                  variant="standard"
+                  value={formatCurrency(inputs.firstYearBonus)}
+                  onChange={handleDirectEdit('firstYearBonus')}
+                  InputProps={{
+                    readOnly: currencySwitch,
+                  }}
+                  sx={{
+                    '& .MuiInputBase-input.Mui-disabled': {
+                      WebkitTextFillColor: 'inherit',
+                      opacity: 1,
+                    },
+                  }}
+                  inputProps={{ 'aria-label': 'First year bonus input' }}
+                />
+              </Box>
+  
+              {/* Principal Input */}
+              <Box>
+                <TextField
+                  fullWidth
+                  label="Principal"
+                  variant="standard"
+                  value={formatCurrency(inputs.principal)}
+                  onChange={handleDirectEdit('principal')}
+                  InputProps={{
+                    readOnly: currencySwitch,
+                  }}
+                  sx={{
+                    '& .MuiInputBase-input.Mui-disabled': {
+                      WebkitTextFillColor: 'inherit',
+                      opacity: 1,
+                    },
+                  }}
+                  inputProps={{ 'aria-label': 'Principal input' }}
+                />
+              </Box>
             </Box>
-
-            {/* Loan Percentage Input */}
-            <Box position="relative">
-            <IconButton
-  sx={{ position: 'absolute', top: 0, right: 0, p: '5px', zIndex: 1 }}
-  onClick={(event) => {
-    setDialogOpen(true);
-    event.currentTarget.blur(); // 失去焦點
-  }}
->
-  <EditIcon fontSize="small" />
-</IconButton>
-              <TextField
-                fullWidth
-                label={
-                  <Box display="flex" alignItems="center" gap={0.5}>
-                    <Button
-                      variant="outlined"
-                      size="small"
-                      sx={{ p: '2px', minWidth: 0, lineHeight: 1 }}
-                      onClick={handleLoanRateToggle} // Add toggle handler
-                    >
-                      Loan %
-                    </Button>
-                    <span>(Amount)</span>
-                  </Box>
-                }
-                variant="standard"
-                value={`${inputs.loanRate}%`}
-                onChange={handleDirectEdit('loanRate')}
-                inputProps={{ 'aria-label': 'Loan percentage input' }}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      ({formatCurrency(loanAmount)})
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Box>
-
-            {/* 1st Year Bonus Input */}
-            <Box>
-              <TextField
-                fullWidth
-                label="1st Year Bonus"
-                variant="standard"
-                value={formatCurrency(inputs.firstYearBonus)}
-                onChange={handleDirectEdit('firstYearBonus')}
-                inputProps={{ 'aria-label': 'First year bonus input' }}
-              />
-            </Box>
-
-            {/* Principal Input */}
-            <Box>
-              <TextField
-                fullWidth
-                label="Principal"
-                variant="standard"
-                value={formatCurrency(inputs.principal)}
-                onChange={handleDirectEdit('principal')}
-                inputProps={{ 'aria-label': 'Principal input' }}
-              />
-            </Box>
-          </Box>
-        </CardContent>
-      </Card>
-    </Box>
-  );
-};
+          </CardContent>
+        </Card>
+      </Box>
+    );
+  };
 
 export default PremiumInput;

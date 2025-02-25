@@ -6,6 +6,7 @@ import BankInterest from './components/Inputs/BankInterest';
 import TermsAndCashValue from './components/Inputs/TermsAndCashValue';
 import TermsTable from './components/Inputs/TermsTable';
 import ReturnChart from './components/Inputs/ReturnChart';
+import Currency from './components/Inputs/Currency';
 
 const theme = createTheme({
   palette: {
@@ -55,6 +56,7 @@ const initialTableData = {
 
 
 
+
 const App = () => {
   // Move state inside component
   const [premiumInput, setPremiumInput] = useState(() => {
@@ -70,6 +72,9 @@ const App = () => {
     return initialTableData;  
   });
 
+  const [currencySwitch, setCurrencySwitch] = useState(false);
+
+
 
   useEffect(() => {
     localStorage.setItem('premiumInput', JSON.stringify(premiumInput));
@@ -82,9 +87,12 @@ const App = () => {
     ...bankInterestInput,
     ...termsAndCashValue,
     ...tableData,
+    currencySwitch
    // duration: userInput3.toAge - userInput3.fromAge
   };
   console.log("combinedInputs",combinedInputs);
+  
+  
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -102,22 +110,31 @@ const App = () => {
                   <PremiumInput 
                     inputs={premiumInput}
                     setInputs={setPremiumInput}
+                    currencySwitch = {currencySwitch}
                   />
                 </Box>
               </Grid>
 
               {/* Mobile-only components */}
               <Grid item sx={{ display: { xs: 'block', md: 'none' }, width: '100%' }}>
+              <Currency 
+                switch={currencySwitch}
+                setInputs={setCurrencySwitch}
+              />
+              </Grid>
+              <Grid item sx={{ display: { xs: 'block', md: 'none' }, width: '100%' }}>
                 <BankInterest 
                   inputs={bankInterestInput}
                   setInputs={setBankInterestInput}
                   loanAmount={premiumInput.loanAmount || 0}
+                  currencySwitch = {currencySwitch}
                 />
               </Grid>
               <Grid item sx={{ display: { xs: 'block', md: 'none' }, width: '100%' }}>
                 <TermsAndCashValue 
                   inputs={termsAndCashValue}
                   setInputs={setTermsAndCashValue}
+                  currencySwitch = {currencySwitch}
                 />
               </Grid>
 
@@ -127,6 +144,7 @@ const App = () => {
                   premiumInput={premiumInput}
                   termsData={termsAndCashValue}
                   tableData={tableData}
+                  currencySwitch = {currencySwitch}
                 />
               </Grid>
               <Grid item sx={{ width: '100%' }}>
@@ -136,8 +154,10 @@ const App = () => {
                   bankInterest={bankInterestInput}
                   tableData={tableData}
                   setInputs={settableData}
+                  currencySwitch = {currencySwitch}
                 />
               </Grid>
+              
             </Grid>
           </Grid>
 
@@ -147,17 +167,25 @@ const App = () => {
             position: 'relative'
           }}>
             <Grid container direction="column" spacing={3}>
+            <Grid item>
+              <Currency 
+                switch={currencySwitch}
+                setInputs={setCurrencySwitch}
+              />
+              </Grid>
               <Grid item>
                 <BankInterest 
                   inputs={bankInterestInput}
                   setInputs={setBankInterestInput}
                   loanAmount={premiumInput.loanAmount || 0}
+                  currencySwitch = {currencySwitch}
                 />
               </Grid>
               <Grid item>
                 <TermsAndCashValue 
                   inputs={termsAndCashValue}
                   setInputs={setTermsAndCashValue}
+                  currencySwitch = {currencySwitch}
                 />
               </Grid>
             </Grid>
