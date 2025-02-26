@@ -164,7 +164,7 @@ const PremiumInput = ({ inputs, setInputs, currencySwitch }) => {
                 }
                 inputRef={loanRateInputRef} // Use inputRef instead of ref
                 variant="standard"
-                value={`${inputs.loanRate}%`}
+                value={`${inputs.loanRate.toFixed(0)}%`}
                 onFocus={handleFocus}
                 onChange={handleDirectEdit('loanRate')}
                 InputProps={{
