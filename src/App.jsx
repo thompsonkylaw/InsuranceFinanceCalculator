@@ -197,7 +197,9 @@ const App = () => {
                   currencySwitch = {currencySwitch}
                 />
               </Grid>
-              
+              <Grid item>
+                  <LanguageSwitcher onReset={resetAllInputs} />
+              </Grid>
             </Grid>
           </Grid>
 
