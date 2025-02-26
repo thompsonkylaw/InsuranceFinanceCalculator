@@ -9,15 +9,16 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-const BankInterest = ({ inputs, setInputs, loanAmount,currencySwitch }) => {
+const BankInterest = ({ inputs, setInputs, loanAmount, currencySwitch }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [localLoanInterest, setLocalLoanInterest] = useState(inputs.loanInterest);
+  const [sliderValue, setSliderValue] = useState(inputs.loanInterest); // Local state for slider
 
-  // Add this effect to sync local state with parent state
+  // Sync sliderValue with inputs.loanInterest whenever it changes
   useEffect(() => {
-    setLocalLoanInterest(inputs.loanInterest);
+    setSliderValue(inputs.loanInterest);
   }, [inputs.loanInterest]);
 
+  // Update monthly interest payment when loan amount or interest changes
   useEffect(() => {
     const monthlyPayment = (loanAmount * inputs.loanInterest) / 12 / 100;
     setInputs((prev) => ({
@@ -26,29 +27,27 @@ const BankInterest = ({ inputs, setInputs, loanAmount,currencySwitch }) => {
     }));
   }, [loanAmount, inputs.loanInterest, setInputs]);
 
+  // Handle input field changes
   const handleInputChange = (e) => {
-    const rawValue = e.target.value.replace(/\D/g, ""); // Remove non-digits
+    const rawValue = e.target.value.replace(/[^0-9.]/g, ""); // Allow only digits and decimal point
     const numericValue = rawValue ? parseFloat(rawValue) : 0;
-    
-    // Update local state immediately for responsive input
-    setLocalLoanInterest(numericValue);
-    
-    // Update parent state with clamped value
-    const clampedValue = Math.min(Math.max(numericValue, 0.125), 10);
-    updateValues(clampedValue);
-  };
-
-
-  const handleSliderChange = (event, newValue) => {
-    updateValues(newValue);
-  };
-
-  const updateValues = (interest) => {
-    const monthlyPayment = (loanAmount * interest) / 12 / 100;
+    const clampedValue = Math.min(Math.max(numericValue, 0.125), 10); // Clamp between 0.125 and 10
     setInputs((prev) => ({
       ...prev,
-      loanInterest: interest,
-      monthlyInterestPayment: monthlyPayment,
+      loanInterest: clampedValue,
+    }));
+  };
+
+  // Handle slider movement (updates local state during drag)
+  const handleSliderChange = (event, newValue) => {
+    setSliderValue(newValue);
+  };
+
+  // Handle slider release (updates parent state)
+  const handleSliderChangeCommitted = (event, newValue) => {
+    setInputs((prev) => ({
+      ...prev,
+      loanInterest: newValue,
     }));
   };
 
@@ -64,56 +63,51 @@ const BankInterest = ({ inputs, setInputs, loanAmount,currencySwitch }) => {
           <Grid item>
             <input
               type="text"
-              value={`${localLoanInterest}%`}
+              value={inputs.loanInterest} // Directly tied to parent state
               onChange={handleInputChange}
               disabled={currencySwitch}
               style={{
-                width: '60px',
-                border: 'none',
-                background: 'transparent',
-                fontSize: '1rem',
-                fontWeight: 'bold',
-                color: currencySwitch ? '#999' : '#1976d2',
-                textAlign: 'right',
-                cursor: currencySwitch ? 'not-allowed' : 'auto'
+                width: "60px",
+                border: "none",
+                background: "transparent",
+                fontSize: "1rem",
+                fontWeight: "bold",
+                color: currencySwitch ? "#999" : "#1976d2",
+                textAlign: "right",
+                cursor: currencySwitch ? "not-allowed" : "auto",
               }}
             />
           </Grid>
-          
           <Grid item>
-          <IconButton
+          <Typography variant="subtitle1" fontWeight="bold">
+              %
+            </Typography>
+          </Grid>
+          <Grid item>
+            <IconButton
               size="small"
-              onClick={(event) => {
-                setIsExpanded(!isExpanded);
-                event.currentTarget.blur();
-              }}
+              onClick={() => setIsExpanded(!isExpanded)}
               sx={{
                 transform: isExpanded ? "rotate(180deg)" : "none",
                 transition: "transform 0.3s ease",
-                // Remove currencySwitch-related styling
-                color: 'inherit',
-                cursor: 'pointer'
               }}
             >
               <ExpandMoreIcon />
-        
             </IconButton>
           </Grid>
         </Grid>
 
-        {/* 展開顯示的內容 */}
         {isExpanded && (
           <Typography variant="body2" sx={{ mt: 1, mb: 2 }}>
-            Monthly Interest: {currencySwitch ? 'HK$' : '$'}
-            {(inputs.monthlyInterestPayment * 
-              (currencySwitch ? 7.8 : 1)).toFixed(2)}
+            Monthly Interest: {currencySwitch ? "HK$" : "$"}
+            {(inputs.monthlyInterestPayment * (currencySwitch ? 7.8 : 1)).toFixed(2)}
           </Typography>
         )}
 
-        {/* 滑桿 */}
         <Slider
-          value={inputs.loanInterest}
-          onChange={handleSliderChange}
+          value={sliderValue} // Controlled by local state
+          onChange={handleSliderChange} // Updates local state during drag
+          onChangeCommitted={handleSliderChangeCommitted} // Updates parent state on release
           disabled={currencySwitch}
           step={0.125}
           marks
@@ -124,17 +118,14 @@ const BankInterest = ({ inputs, setInputs, loanAmount,currencySwitch }) => {
             "& .MuiSlider-thumb": {
               borderRadius: "50%",
               border: currencySwitch ? "2px solid #999" : "2px solid blue",
-              bgcolor: currencySwitch ? '#fff' : 'blue',
+              bgcolor: currencySwitch ? "#fff" : "blue",
             },
             "& .MuiSlider-track": {
-              bgcolor: currencySwitch ? '#999' : "blue",
+              bgcolor: currencySwitch ? "#999" : "blue",
             },
             "& .MuiSlider-rail": {
               bgcolor: "#d3d3d3",
             },
-            "& .Mui-disabled": {
-              cursor: 'not-allowed'
-            }
           }}
         />
       </CardContent>

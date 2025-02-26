@@ -19,8 +19,9 @@ const Currency = ({ switch: isHkd, setInputs }) => {
 
   return (
     <Grid item xs={12}>
-      <Card className="pfa-card pf-card-container pf-currency-input-panel">
-        <div style={{ paddingTop: 8, paddingLeft:30, background: '#FFFBF5' }}>
+      
+      <Card sx={{ p: 1, borderRadius: 3, boxShadow: 3, mt: 2 }}>
+        <div style={{ paddingTop: 0, paddingLeft:25, background: '#FFFBF5' }}>
           <Grid container direction="column">
             <Grid item>
               <Grid container alignItems="center" justifyContent="space-between" spacing={1}>

@@ -4,22 +4,24 @@ import {
   CardContent,
   Grid,
   Typography,
-  IconButton,
   Select,
   MenuItem,
   InputBase
 } from '@mui/material';
-import { Edit, Info, ExpandMore } from '@mui/icons-material';
+import { ExpandMore } from '@mui/icons-material';
 import Chart from 'chart.js/auto';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import annotationPlugin from 'chartjs-plugin-annotation';
 
-Chart.register(ChartDataLabels);
+// Register Chart.js plugins
+Chart.register(ChartDataLabels, annotationPlugin);
 
-const ReturnChart = ({ termsData, premiumInput, tableData,currencySwitch }) => {
+const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => {
   const [viewMode, setViewMode] = React.useState('Return Detail');
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
 
+  // Define colors for each dataset
   const colors = {
     Principal: 'rgb(57, 102, 248)',
     LoanAmount: 'rgb(255, 165, 0)',
@@ -28,23 +30,30 @@ const ReturnChart = ({ termsData, premiumInput, tableData,currencySwitch }) => {
     NetCash: 'rgb(62, 199, 248)'
   };
 
+  // Convert currency based on currencySwitch (USD to HKD if true)
   const convertCurrency = (value) => {
     return currencySwitch ? value * 7.8 : value;
+  };
+
+  // Format numbers with commas and append 'K' for thousands
+  const formatNumber = (num) => {
+    return Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
   useEffect(() => {
     if (chartRef.current) {
       const ctx = chartRef.current.getContext('2d');
-      
+      // Destroy existing chart instance to prevent overlap
       if (chartInstance.current) {
         chartInstance.current.destroy();
       }
 
+      // Generate labels for x-axis (e.g., Year 0, Year 1, ...)
       const labels = ['Year 0', ...termsData.term.map(t => `Year ${t}`)];
       let datasets = [];
 
+      // Configure datasets based on viewMode
       if (viewMode === 'Net Cash') {
-        // Net Cash View Configuration
         datasets = [
           {
             label: 'Principal',
@@ -60,9 +69,7 @@ const ReturnChart = ({ termsData, premiumInput, tableData,currencySwitch }) => {
           }
         ];
       } else {
-        // Base configuration for other views
         const isPrincipalView = viewMode === 'Principal vs Net Return';
-
         datasets = [
           {
             label: 'Principal',
@@ -94,125 +101,207 @@ const ReturnChart = ({ termsData, premiumInput, tableData,currencySwitch }) => {
             stack: 'Stack 0'
           }
         ];
-
-        // Filter datasets for Principal vs Return view
         if (isPrincipalView) {
-          datasets = datasets.filter(d => 
-            ['Principal', 'Return'].includes(d.label)
-          );
+          datasets = datasets.filter(d => ['Principal', 'Return'].includes(d.label));
         }
       }
 
-      const chartData = {
-        labels,
-        datasets: datasets.map(dataset => ({
-          ...dataset,
-          data: dataset.data.map(value => convertCurrency(value))
-        }))
-      };
+      // Apply currency conversion to all dataset values
+      datasets = datasets.map(ds => ({
+        ...ds,
+        data: ds.data.map(value => convertCurrency(value))
+      }));
 
-      chartInstance.current = new Chart(ctx, {
-        type: 'bar',
-        data: chartData,
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            x: {
-              stacked: true,
-              title: { display: true, text: 'Term Year' }
-            },
-            y: {
-              stacked: true,
-              title: { 
-                display: true, 
-                text: currencySwitch ? 'Amount (HKD)' : 'Amount (USD)'
-              },
-              ticks: { 
-                callback: (value) => `${Math.abs(value/1000).toFixed(0)}K` 
+      // Calculate the maximum total value across all labels
+      const maxTotal = Math.max(...labels.map((_, index) =>
+        datasets.reduce((sum, ds) => sum + (ds.data[index] || 0), 0)
+      ));
+
+      // Add datalabels configuration for inside bar labels
+      const updatedDatasets = datasets.map(ds => ({
+        ...ds,
+        datalabels: {
+          anchor: 'center',
+          align: 'center',
+          color: 'white',
+          font: { weight: 'bold', size: 12 },
+          formatter: (value) => value ? `${formatNumber(value / 1000)}K` : null
+        }
+      }));
+
+      // Create annotations for top labels based on viewMode
+      const annotations = labels.map((label, index) => {
+        if (viewMode === 'Return Detail') {
+          const total = datasets.reduce((sum, ds) => sum + (ds.data[index] || 0), 0);
+          if (index === 0) {
+            const premiumValue = convertCurrency(premiumInput.premium || 0);
+            return {
+              type: 'label',
+              xValue: index,
+              yValue: total,
+              content: `${formatNumber(premiumValue / 1000)}K`,
+              backgroundColor: 'transparent',
+              borderColor: 'transparent',
+              font: { size: 12, weight: 'bold' },
+              position: 'center',
+              yAdjust: -20
+            };
+          } else {
+            const returnRate = parseFloat(tableData.returnRate[index - 1]) || 0;
+            return {
+              type: 'label',
+              xValue: index,
+              yValue: total,
+              content: [
+                `Return: ${returnRate.toFixed(2)}%`,
+                `Cash Value: ${formatNumber(total / 1000)}K`
+              ],
+              backgroundColor: 'transparent',
+              borderColor: 'transparent',
+              font: { size: 12, weight: 'bold' },
+              position: 'center',
+              yAdjust: -30
+            };
+          }
+        } else if (viewMode === 'Principal vs Net Return') {
+          const principal = datasets[0].data[index];
+          const returnValue = datasets[1].data[index];
+          const total = principal + returnValue;
+          if (index === 0) {
+            return {
+              type: 'label',
+              xValue: index,
+              yValue: total,
+              content: `Principal: ${formatNumber(principal / 1000)}K`,
+              backgroundColor: 'transparent',
+              borderColor: 'transparent',
+              font: { size: 12, weight: 'bold' },
+              position: 'center',
+              yAdjust: -20
+            };
+          } else {
+            const returnRate = parseFloat(tableData.returnRate[index - 1]) || 0;
+            return {
+              type: 'label',
+              xValue: index,
+              yValue: total,
+              content: [
+                `Total: ${formatNumber(total / 1000)}K`,
+                `Return Rate: ${returnRate.toFixed(2)}%`
+              ],
+              backgroundColor: 'transparent',
+              borderColor: 'transparent',
+              font: { size: 12, weight: 'bold' },
+              position: 'center',
+              yAdjust: -30
+            };
+          }
+        } else if (viewMode === 'Net Cash') {
+          const principal = datasets[0].data[0];
+          const netCash = datasets[1].data[index];
+          if (index === 0) {
+            return {
+              type: 'label',
+              xValue: index,
+              yValue: principal,
+              content: `Principal: ${formatNumber(principal / 1000)}K`,
+              backgroundColor: 'transparent',
+              borderColor: 'transparent',
+              font: { size: 12, weight: 'bold' },
+              position: 'center',
+              yAdjust: -20
+            };
+          } else {
+            const gain = principal !== 0 ? netCash / principal : 0;
+            return {
+              type: 'label',
+              xValue: index,
+              yValue: netCash,
+              content: [
+                `Net Cash: ${formatNumber(netCash / 1000)}K`,
+                `Gain: ${gain.toFixed(2)}x`
+              ],
+              backgroundColor: 'transparent',
+              borderColor: 'transparent',
+              font: { size: 12, weight: 'bold' },
+              position: 'center',
+              yAdjust: -30
+            };
+          }
+        }
+        return null;
+      }).filter(a => a !== null);
+
+      // Chart data and options
+      const chartData = { labels, datasets: updatedDatasets };
+      const options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: {
+          padding: {
+            top: 40 // Padding to accommodate top annotations
+          }
+        },
+        scales: {
+          x: {
+            stacked: true,
+            title: { display: true, text: 'Term Year' }
+          },
+          y: {
+            stacked: true,
+            title: { display: true, text: currencySwitch ? 'Amount (HKD)' : 'Amount (USD)' },
+            ticks: { callback: (value) => `${Math.abs(value / 1000).toFixed(0)}K` },
+            max: maxTotal * 1.2 // Increase y-axis max by 20%
+          }
+        },
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: (context) => {
+                const label = context.dataset.label || '';
+                const value = context.raw >= 0 ? context.raw : -context.raw;
+                const symbol = currencySwitch ? 'HK$' : '$';
+                return `${label}: ${symbol}${Math.round(value / 1000)}K`;
               }
             }
           },
-          plugins: {
-            tooltip: {
-              callbacks: {
-                label: (context) => {
-                  const label = context.dataset.label || '';
-                  const value = context.raw >= 0 ? context.raw : -context.raw;
-                  const symbol = currencySwitch ? 'HK$' : '$';
-                  return `${label}: ${symbol}${Math.round(value/1000)}K`;
-                }
-              }
-            },
-            legend: {
-              position: 'bottom',
-              labels: { boxWidth: 20, padding: 20 }
-            },
-            datalabels: {
-              display: true,
-              color: 'white',
-              anchor: 'center',
-              align: 'center',
-              clamp: true,
-              formatter: (value, context) => {
-                if (value === 0) return null;
-                if (viewMode === 'Net Cash' && context.dataIndex === 0) {
-                  return context.dataset.label === 'Principal' ? 'Principal' : null;
-                }
-                return context.dataset.label;
-              },
-              font: { weight: 'bold', size: 12 }
-            }
-          }
+          legend: { position: 'bottom', labels: { boxWidth: 20, padding: 20 } },
+          annotation: { annotations }
         }
+      };
+
+      // Initialize the chart
+      chartInstance.current = new Chart(ctx, {
+        type: 'bar',
+        data: chartData,
+        options: options
       });
     }
 
+    // Cleanup on unmount or dependency change
     return () => {
       if (chartInstance.current) {
         chartInstance.current.destroy();
       }
     };
-  }, [termsData, premiumInput, tableData, viewMode,currencySwitch]);
+  }, [termsData, premiumInput, tableData, viewMode, currencySwitch]);
 
+  // JSX for rendering the chart component
   return (
     <Card>
       <CardContent>
         <Grid container spacing={1}>
           <Grid item xs={12} style={{ textAlign: 'end' }}>
-            <Grid container alignItems="center" justifyContent="space-between">
-              <Grid item>
-                <Grid container spacing={1} alignItems="center">
-                  <Grid item>
-                    {/* <Typography variant="body1" style={{ fontSize: '125%', fontWeight: 500 }}>
-                      Ver. 1
-                    </Typography> */}
-                  </Grid>
-                  <Grid item>
-                    {/* <IconButton size="small" style={{ padding: 4 }}>
-                      <Edit fontSize="small" />
-                    </IconButton> */}
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Grid item>
-                <Grid container alignItems="center" justifyContent="flex-end">
-                  {/* <IconButton color="primary" aria-label="More Info">
-                    <Info />
-                  </IconButton> */}
-                  <Select
-                    value={viewMode}
-                    onChange={(e) => setViewMode(e.target.value)}
-                    input={<InputBase style={{ fontSize: 12 }} />}
-                    IconComponent={ExpandMore}
-                  >
-                    <MenuItem value="Return Detail">Return Detail</MenuItem>
-                    <MenuItem value="Principal vs Net Return">Principal vs Net Return</MenuItem>
-                    <MenuItem value="Net Cash">Net Cash</MenuItem>
-                  </Select>
-                </Grid>
-              </Grid>
-            </Grid>
+            <Select
+              value={viewMode}
+              onChange={(e) => setViewMode(e.target.value)}
+              input={<InputBase style={{ fontSize: 12 }} />}
+              IconComponent={ExpandMore}
+            >
+              <MenuItem value="Return Detail">Return Detail</MenuItem>
+              <MenuItem value="Principal vs Net Return">Principal vs Net Return</MenuItem>
+              <MenuItem value="Net Cash">Net Cash</MenuItem>
+            </Select>
           </Grid>
           <Grid item xs={12}>
             <Typography align="center" variant="body1">
