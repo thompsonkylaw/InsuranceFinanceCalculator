@@ -7,6 +7,7 @@ import TermsAndCashValue from './components/Inputs/TermsAndCashValue';
 import TermsTable from './components/Inputs/TermsTable';
 import ReturnChart from './components/Inputs/ReturnChart';
 import Currency from './components/Inputs/Currency';
+import LanguageSwitcher from './components/Inputs/LanguageSwitch';
 
 const theme = createTheme({
   palette: {
@@ -187,6 +188,13 @@ const App = () => {
                   inputs={termsAndCashValue}
                   setInputs={setTermsAndCashValue}
                   currencySwitch = {currencySwitch}
+                />
+              </Grid>
+              <Grid item>
+                <LanguageSwitcher 
+                  // inputs={termsAndCashValue}
+                  // setInputs={setTermsAndCashValue}
+                  // currencySwitch = {currencySwitch}
                 />
               </Grid>
             </Grid>

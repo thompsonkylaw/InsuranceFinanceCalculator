@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { Box, Card, CardContent, TextField, Button, IconButton, InputAdornment } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import LoanAmountForm from './LoanAmountForm';
+import { useTranslation } from 'react-i18next';
 
 const PremiumInput = ({ inputs, setInputs,currencySwitch }) => {
+  const { t } = useTranslation();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [savedLoanRate, setSavedLoanRate] = useState(inputs.loanRate); // State to store the saved loan rate
   const [isLoanRateZero, setIsLoanRateZero] = useState(false); // State to track if loan rate is toggled to 0%
@@ -105,7 +107,8 @@ const PremiumInput = ({ inputs, setInputs,currencySwitch }) => {
               <Box>
                 <TextField
                   fullWidth
-                  label="Premium"
+                  // label="Premium"
+                  label={t('premium')}
                   variant="standard"
                   value={formatCurrency(inputs.premium)}
                   onChange={handleDirectEdit('premium')}
