@@ -50,40 +50,78 @@ const initialTermsAndCashValue = {
 };
 
 const initialTableData = {
-  totalExpense: [346000,691000,1040000],
-  netCash:[927000,1940000,3350000],
-  returnInDollar:[293000,701000,1761000],
-  returnRate:[5.31,127.03,319.01],
+  totalExpense: [345600,691200,1036800],
+  netCash:[926933,1944432,3349716],
+  returnInDollar:[29333,701232,1760916],
+  returnRate:[5.313949275362319,127.03478260869565,319.00652173913045],
 };
 
 
 
 
 const App = () => {
-  // Move state inside component
+  // Initialize state with local storage or initial values
   const [premiumInput, setPremiumInput] = useState(() => {
-    return initialPremiumInput;
-  });  
+    const saved = localStorage.getItem('premiumInput');
+    return saved ? JSON.parse(saved) : initialPremiumInput;
+  });
   const [bankInterestInput, setBankInterestInput] = useState(() => {
-      return initialBankInterestInput;  
+    const saved = localStorage.getItem('bankInterestInput');
+    return saved ? JSON.parse(saved) : initialBankInterestInput;
   });
   const [termsAndCashValue, setTermsAndCashValue] = useState(() => {
-    return initialTermsAndCashValue;  
+    const saved = localStorage.getItem('termsAndCashValue');
+    return saved ? JSON.parse(saved) : initialTermsAndCashValue;
   });
   const [tableData, settableData] = useState(() => {
-    return initialTableData;  
+    const saved = localStorage.getItem('tableData');
+    return saved ? JSON.parse(saved) : initialTableData;
+  });
+  const [currencySwitch, setCurrencySwitch] = useState(() => {
+    const saved = localStorage.getItem('currencySwitch');
+    return saved ? JSON.parse(saved) : false;
   });
 
-  const [currencySwitch, setCurrencySwitch] = useState(false);
-
-
-
+  // Save states to local storage on update
   useEffect(() => {
     localStorage.setItem('premiumInput', JSON.stringify(premiumInput));
   }, [premiumInput]);
 
+  useEffect(() => {
+    localStorage.setItem('bankInterestInput', JSON.stringify(bankInterestInput));
+  }, [bankInterestInput]);
 
-  
+  useEffect(() => {
+    localStorage.setItem('termsAndCashValue', JSON.stringify(termsAndCashValue));
+  }, [termsAndCashValue]);
+
+  useEffect(() => {
+    localStorage.setItem('tableData', JSON.stringify(tableData));
+  }, [tableData]);
+
+  useEffect(() => {
+    localStorage.setItem('currencySwitch', JSON.stringify(currencySwitch));
+  }, [currencySwitch]);
+
+  // Reset all inputs to initial state
+  const resetAllInputs = () => {
+    setPremiumInput(initialPremiumInput);
+    setBankInterestInput(initialBankInterestInput);
+    setTermsAndCashValue(initialTermsAndCashValue);
+    settableData(initialTableData);
+    setCurrencySwitch(false);
+
+    const combinedInputs = {
+      ...premiumInput,
+      ...bankInterestInput,
+      ...termsAndCashValue,
+      ...tableData,
+      currencySwitch
+     // duration: userInput3.toAge - userInput3.fromAge
+    };
+    // console.log("combinedInputs",combinedInputs);
+  };
+
   const combinedInputs = {
     ...premiumInput,
     ...bankInterestInput,
@@ -92,7 +130,7 @@ const App = () => {
     currencySwitch
    // duration: userInput3.toAge - userInput3.fromAge
   };
-  console.log("combinedInputs",combinedInputs);
+  // console.log("combinedInputs",combinedInputs);
   
   
   return (
@@ -191,11 +229,7 @@ const App = () => {
                 />
               </Grid>
               <Grid item>
-                <LanguageSwitcher 
-                  // inputs={termsAndCashValue}
-                  // setInputs={setTermsAndCashValue}
-                  // currencySwitch = {currencySwitch}
-                />
+                  <LanguageSwitcher onReset={resetAllInputs} />
               </Grid>
             </Grid>
           </Grid>

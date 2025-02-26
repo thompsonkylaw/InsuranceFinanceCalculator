@@ -1,5 +1,7 @@
 // Currency.jsx
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+
 import {
   Grid,
   Card,
@@ -11,6 +13,7 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 
 const Currency = ({ switch: isHkd, setInputs }) => {
+  const { t } = useTranslation();  
   const handleChange = (event) => {
     // console.log('event.target.checked',event.target.checked);
     // Update parent state with new switch value
@@ -50,7 +53,7 @@ const Currency = ({ switch: isHkd, setInputs }) => {
                         </Grid> */}
                         <Grid item>
                           <Typography variant="body1" color="textSecondary" style={{ fontSize: 14 }}>
-                            Display Currency: {isHkd ? 'HKD' : 'USD'}
+                            {t('Display_Currency')}: {isHkd ? 'HKD' : 'USD'}
                           </Typography>
                         </Grid>
                       </Grid>

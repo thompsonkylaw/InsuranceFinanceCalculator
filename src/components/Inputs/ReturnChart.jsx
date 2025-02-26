@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Card,
   CardContent,
@@ -17,6 +18,7 @@ import annotationPlugin from 'chartjs-plugin-annotation';
 Chart.register(ChartDataLabels, annotationPlugin);
 
 const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => {
+  const { t, i18n } = useTranslation();
   const [viewMode, setViewMode] = React.useState('Return Detail');
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
@@ -35,34 +37,56 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
     return currencySwitch ? value * 7.8 : value;
   };
 
-  // Format numbers with commas and append 'K' for thousands
+  // Enhanced formatNumber function with language detection
   const formatNumber = (num) => {
-    return Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    if (num === null || num === undefined) return '';
+    const absNum = Math.abs(num);
+    const roundedNum = Math.round(absNum);
+
+    // Detect current language from i18n
+    const lang = i18n.language;
+   
+    if (lang.startsWith('zh')) {
+      // Chinese formatting: use "萬" (Traditional) or "万" (Simplified) for ≥ 10,000
+      const isTraditional = lang === 'zh-HK';
+      
+      if (absNum >= 10000) {
+        const wanValue = (absNum / 10000).toFixed(1).replace(/\.0$/, '');
+        return `${num < 0 ? '-' : ''}${wanValue}${isTraditional ? '萬' : '万'}`;
+      }
+      return num.toString(); // No suffix for < 10,000
+    } else {
+      // English (and default) formatting: use commas and "K" for thousands
+      if (absNum >= 1000) {
+        const kValue = Math.round(absNum / 1000);
+        return `${num < 0 ? '-' : ''}${kValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}K`;
+      }
+      return num.toString();
+    }
   };
 
   useEffect(() => {
     if (chartRef.current) {
       const ctx = chartRef.current.getContext('2d');
-      // Destroy existing chart instance to prevent overlap
       if (chartInstance.current) {
         chartInstance.current.destroy();
       }
 
-      // Generate labels for x-axis (e.g., Year 0, Year 1, ...)
-      const labels = ['Year 0', ...termsData.term.map(t => `Year ${t}`)];
+      // Generate labels for x-axis with translation
+      const labels = [t('Year 0'), ...termsData.term.map(term => `${t('Yearth', { year: term })} `)];
       let datasets = [];
 
       // Configure datasets based on viewMode
       if (viewMode === 'Net Cash') {
         datasets = [
           {
-            label: 'Principal',
+            label: t('Principal'),
             data: [premiumInput.principal, ...termsData.term.map(() => 0)],
             backgroundColor: colors.Principal,
             stack: 'Stack 0'
           },
           {
-            label: 'Net Cash',
+            label: t('Net Cash'),
             data: [0, ...tableData.netCash],
             backgroundColor: colors.NetCash,
             stack: 'Stack 0'
@@ -72,27 +96,27 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
         const isPrincipalView = viewMode === 'Principal vs Net Return';
         datasets = [
           {
-            label: 'Principal',
+            label: t('Principal'),
             data: [premiumInput.principal, ...termsData.term.map(() => premiumInput.principal)],
             backgroundColor: colors.Principal,
             stack: 'Stack 0'
           },
           {
-            label: 'Loan Amount',
+            label: t('Loan Amount'),
             data: [premiumInput.loanAmount, ...termsData.term.map(() => premiumInput.loanAmount)],
             backgroundColor: colors.LoanAmount,
             stack: 'Stack 0',
             hidden: isPrincipalView
           },
           {
-            label: 'Total Expense',
+            label: t('Total Expense'),
             data: [0, ...tableData.totalExpense],
             backgroundColor: colors.TotalExpense,
             stack: 'Stack 0',
             hidden: isPrincipalView
           },
           {
-            label: 'Return',
+            label: t('Return'),
             data: [
               isPrincipalView ? 0 : premiumInput.firstYearBonus,
               ...tableData.returnInDollar
@@ -102,7 +126,7 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
           }
         ];
         if (isPrincipalView) {
-          datasets = datasets.filter(d => ['Principal', 'Return'].includes(d.label));
+          datasets = datasets.filter(d => [t('Principal'), t('Return')].includes(d.label));
         }
       }
 
@@ -125,7 +149,7 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
           align: 'center',
           color: 'white',
           font: { weight: 'bold', size: 12 },
-          formatter: (value) => value ? `${formatNumber(value / 1000)}K` : null
+          formatter: (value) => value ? formatNumber(value) : null
         }
       }));
 
@@ -139,7 +163,7 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
               type: 'label',
               xValue: index,
               yValue: total,
-              content: `${formatNumber(premiumValue / 1000)}K`,
+              content: formatNumber(premiumValue),
               backgroundColor: 'transparent',
               borderColor: 'transparent',
               font: { size: 12, weight: 'bold' },
@@ -153,8 +177,8 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
               xValue: index,
               yValue: total,
               content: [
-                `Return: ${returnRate.toFixed(2)}%`,
-                `Cash Value: ${formatNumber(total / 1000)}K`
+                `${t('Return')}: ${returnRate.toFixed(2)}%`,
+                `${t('Cash Value')}: ${formatNumber(total)}`
               ],
               backgroundColor: 'transparent',
               borderColor: 'transparent',
@@ -172,7 +196,7 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
               type: 'label',
               xValue: index,
               yValue: total,
-              content: `Principal: ${formatNumber(principal / 1000)}K`,
+              content: `${t('Principal')}: ${formatNumber(principal)}`,
               backgroundColor: 'transparent',
               borderColor: 'transparent',
               font: { size: 12, weight: 'bold' },
@@ -186,8 +210,8 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
               xValue: index,
               yValue: total,
               content: [
-                `Total: ${formatNumber(total / 1000)}K`,
-                `Return Rate: ${returnRate.toFixed(2)}%`
+                `${t('Total')}: ${formatNumber(total)}`,
+                `${t('Return_Rate')}: ${returnRate.toFixed(2)}%`
               ],
               backgroundColor: 'transparent',
               borderColor: 'transparent',
@@ -204,7 +228,7 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
               type: 'label',
               xValue: index,
               yValue: principal,
-              content: `Principal: ${formatNumber(principal / 1000)}K`,
+              content: `${t('Principal')}: ${formatNumber(principal)}`,
               backgroundColor: 'transparent',
               borderColor: 'transparent',
               font: { size: 12, weight: 'bold' },
@@ -218,8 +242,8 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
               xValue: index,
               yValue: netCash,
               content: [
-                `Net Cash: ${formatNumber(netCash / 1000)}K`,
-                `Gain: ${gain.toFixed(2)}x`
+                `${t('Net Cash')}: ${formatNumber(netCash)}`,
+                `${t('Gain')}: ${gain.toFixed(2)}x`
               ],
               backgroundColor: 'transparent',
               borderColor: 'transparent',
@@ -239,19 +263,21 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
         maintainAspectRatio: false,
         layout: {
           padding: {
-            top: 40 // Padding to accommodate top annotations
+            top: 40
           }
         },
         scales: {
           x: {
             stacked: true,
-            title: { display: true, text: 'Term Year' }
+            title: { display: true, text: t('Term Year') }
           },
           y: {
             stacked: true,
-            title: { display: true, text: currencySwitch ? 'Amount (HKD)' : 'Amount (USD)' },
-            ticks: { callback: (value) => `${Math.abs(value / 1000).toFixed(0)}K` },
-            max: maxTotal * 1.2 // Increase y-axis max by 20%
+            title: { display: true, text: currencySwitch ? `${t('Amount')} (HKD)` : `${t('Amount')} (USD)` },
+            ticks: {
+              callback: (value) => formatNumber(value)
+            },
+            max: maxTotal * 1.2
           }
         },
         plugins: {
@@ -261,7 +287,7 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
                 const label = context.dataset.label || '';
                 const value = context.raw >= 0 ? context.raw : -context.raw;
                 const symbol = currencySwitch ? 'HK$' : '$';
-                return `${label}: ${symbol}${Math.round(value / 1000)}K`;
+                return `${label}: ${symbol}${formatNumber(value)}`;
               }
             }
           },
@@ -270,7 +296,6 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
         }
       };
 
-      // Initialize the chart
       chartInstance.current = new Chart(ctx, {
         type: 'bar',
         data: chartData,
@@ -278,15 +303,13 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
       });
     }
 
-    // Cleanup on unmount or dependency change
     return () => {
       if (chartInstance.current) {
         chartInstance.current.destroy();
       }
     };
-  }, [termsData, premiumInput, tableData, viewMode, currencySwitch]);
+  }, [termsData, premiumInput, tableData, viewMode, currencySwitch, i18n.language]);
 
-  // JSX for rendering the chart component
   return (
     <Card>
       <CardContent>
@@ -298,14 +321,14 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
               input={<InputBase style={{ fontSize: 12 }} />}
               IconComponent={ExpandMore}
             >
-              <MenuItem value="Return Detail">Return Detail</MenuItem>
-              <MenuItem value="Principal vs Net Return">Principal vs Net Return</MenuItem>
-              <MenuItem value="Net Cash">Net Cash</MenuItem>
+              <MenuItem value="Return Detail">{t('Return Detail')}</MenuItem>
+              <MenuItem value="Principal vs Net Return">{t('Principal vs Net Return')}</MenuItem>
+              <MenuItem value="Net Cash">{t('Net Cash')}</MenuItem>
             </Select>
           </Grid>
           <Grid item xs={12}>
             <Typography align="center" variant="body1">
-              {viewMode === 'Net Cash' ? 'Value after Repayment' : viewMode}
+              {viewMode === 'Net Cash' ? t('Value after Repayment') : t(viewMode)}
             </Typography>
           </Grid>
           <Grid item xs={12} style={{ position: 'relative', height: '400px' }}>

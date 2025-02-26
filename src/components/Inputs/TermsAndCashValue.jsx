@@ -1,7 +1,9 @@
 import React from 'react';
 import { Grid, TextField, MenuItem, Card, CardContent, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 const TermsAndCashValue = ({ inputs, setInputs,currencySwitch }) => {
+  const { t } = useTranslation();
   // Ensure we have valid arrays (handle undefined/null cases)
   const terms = inputs?.term || [];
   const cashValues = inputs?.cashValue || [];
@@ -49,7 +51,7 @@ const TermsAndCashValue = ({ inputs, setInputs,currencySwitch }) => {
     <Card sx={{ p: 2, borderRadius: 3, boxShadow: 3, mt: 2 }}>
     <CardContent>
       <Typography variant="h6" gutterBottom>
-        Terms & Cash Values
+        {t('Terms_Cash_Values')}
       </Typography>
       
       {terms.map((term, index) => {
@@ -61,7 +63,7 @@ const TermsAndCashValue = ({ inputs, setInputs,currencySwitch }) => {
               <TextField
                 fullWidth
                 select
-                label={`Term ${index + 1}`}
+                label={`${t('Term')} ${index + 1}`}
                 value={term}
                 onChange={handleTermChange(index)}
                 variant="outlined"
@@ -77,7 +79,7 @@ const TermsAndCashValue = ({ inputs, setInputs,currencySwitch }) => {
               >
                 {yearOptions.map((year) => (
                   <MenuItem key={year} value={year}>
-                    {year} years
+                    {year} {t('years')}
                   </MenuItem>
                 ))}
               </TextField>
@@ -86,7 +88,7 @@ const TermsAndCashValue = ({ inputs, setInputs,currencySwitch }) => {
             <Grid item xs={6}>
               <TextField
                 fullWidth
-                label={`Cash Value ${index + 1}`}
+                label={`${t('Cash_Value')} ${index + 1}`}
                 value={formatCurrency(cashValue)}
                 onChange={handleCashValueChange(index)}
                 variant="outlined"

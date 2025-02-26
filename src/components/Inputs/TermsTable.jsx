@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Card,
   CardContent,
@@ -16,15 +17,18 @@ import {
 import { ExpandMore, ExpandLess } from '@mui/icons-material';
 
 const TermsTable = ({ termsAndCashValue, premiumInput, bankInterest, tableData, setInputs, currencySwitch }) => {
+  const { t, i18n } = useTranslation(); // Include i18n to access current language
+  const currentLanguage = i18n.language; // Correctly retrieve the current language
   const [expandedRow, setExpandedRow] = useState(null);
+//   console.log('Current language:', currentLanguage); // Log the detected language
 
   useEffect(() => {
     const calculateTableData = () => {
-      const newTotalExpense = termsAndCashValue.term.map(term => 
+      const newTotalExpense = termsAndCashValue.term.map(term =>
         premiumInput.loanAmount * (bankInterest.loanInterest / 100) * term
       );
-      
-      const newNetCash = termsAndCashValue.cashValue.map(cashValue => 
+
+      const newNetCash = termsAndCashValue.cashValue.map(cashValue =>
         cashValue - premiumInput.loanAmount
       );
 
@@ -33,7 +37,7 @@ const TermsTable = ({ termsAndCashValue, premiumInput, bankInterest, tableData, 
         return cashValue - premiumInput.principal - premiumInput.loanAmount - totalExpense;
       });
 
-      const newReturnRate = newReturnInDollar.map(rd => 
+      const newReturnRate = newReturnInDollar.map(rd =>
         (rd / premiumInput.principal) * 100
       );
 
@@ -72,17 +76,35 @@ const TermsTable = ({ termsAndCashValue, premiumInput, bankInterest, tableData, 
     if (event) event.currentTarget.blur();
   };
 
-
   const formatNumber = (num) => {
-    let value = currencySwitch ? num * 7.8 : num;
-    const formatted = value > 999 ? 
-      Math.round(value/1000).toLocaleString() + 'K' : 
-      Math.round(value).toLocaleString();
-    return currencySwitch ? `HK${formatted}` : formatted;
+    let value = currencySwitch ? num * 7.8 : num; // Adjust for HKD if currencySwitch is true
+    const locale = i18n.language || 'en'; // Fallback to 'en' if undefined
+    let formatted;
+  
+    try {
+      if (locale.startsWith('zh')) { // Check for Chinese locales
+        if (value >= 10000) {
+          const wanValue = value / 10000;
+          const unit = locale === 'zh-HK' ? '萬' : '万'; // '萬' for zh-HK, '万' for zh-CN
+          formatted = wanValue.toFixed(1) + unit;
+        } else {
+          formatted = value.toLocaleString(locale); // Use locale-specific formatting
+        }
+      } else { // Default to English formatting
+        if (value >= 1000) {
+          const kValue = Math.round(value / 1000);
+          formatted = kValue.toLocaleString('en') + 'K';
+        } else {
+          formatted = Math.round(value).toLocaleString('en');
+        }
+      }
+    } catch (error) {
+      console.error('Error formatting number with locale:', locale, error);
+      formatted = value.toString(); // Fallback to plain string if all else fails
+    }
+  
+    return currencySwitch ? `HK${formatted}` : formatted; // Add HK prefix if currencySwitch is true
   };
-
-
-
 
   return (
     <Card>
@@ -91,14 +113,14 @@ const TermsTable = ({ termsAndCashValue, premiumInput, bankInterest, tableData, 
           <Table>
             <TableHead>
               <TableRow>
-                {['Year', 'Principal', 'Total Expense', 'Cash Value', 'Net Cash', 'Return'].map(
+                {['Year', 'Principal', 'Total_Expense', 'Cash_Value', 'Net_Cash', 'Return'].map(
                   (header, index) => (
                     <TableCell
                       key={header}
                       align="center"
                       style={{ borderBottom: `6px solid ${headerColors[index]}` }}
                     >
-                      {header}
+                      {t(header)}
                     </TableCell>
                   )
                 )}
@@ -107,7 +129,7 @@ const TermsTable = ({ termsAndCashValue, premiumInput, bankInterest, tableData, 
             <TableBody>
               {termsData.map((data, index) => {
                 const isExpanded = expandedRow === index;
-                const annualizedReturn = Math.pow(1 + (data.returnRate/100), 1/data.term) - 1;
+                const annualizedReturn = Math.pow(1 + (data.returnRate / 100), 1 / data.term) - 1;
 
                 return (
                   <React.Fragment key={data.term}>
@@ -134,7 +156,7 @@ const TermsTable = ({ termsAndCashValue, premiumInput, bankInterest, tableData, 
                               {isExpanded && (
                                 <Grid item>
                                   <Typography variant="caption">
-                                    Annualized: {(annualizedReturn * 100).toFixed(2)}%
+                                    {t('Annualized')}: {(annualizedReturn * 100).toFixed(2)}%
                                   </Typography>
                                 </Grid>
                               )}
@@ -157,11 +179,11 @@ const TermsTable = ({ termsAndCashValue, premiumInput, bankInterest, tableData, 
                     {/* Collapsible Row */}
                     <TableRow className="collapse-rows">
                       {[0, 1, 2, 3, 4, 5].map((colIndex) => (
-                        <TableCell 
+                        <TableCell
                           key={colIndex}
                           align="center"
                           colSpan={1}
-                          style={{ 
+                          style={{
                             padding: 0,
                             borderBottom: colIndex === 5 ? 'none' : undefined
                           }}

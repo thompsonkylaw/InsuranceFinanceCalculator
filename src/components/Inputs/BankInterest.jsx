@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from 'react-i18next';
 import {
   Card,
   CardContent,
@@ -10,6 +11,7 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const BankInterest = ({ inputs, setInputs, loanAmount, currencySwitch }) => {
+  const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
   const [sliderValue, setSliderValue] = useState(inputs.loanInterest); // Local state for slider
 
@@ -57,7 +59,7 @@ const BankInterest = ({ inputs, setInputs, loanAmount, currencySwitch }) => {
         <Grid container alignItems="center" justifyContent="space-between">
           <Grid item>
             <Typography variant="subtitle1" fontWeight="bold">
-              Loan Interest
+              {t('Loan_Interest')}
             </Typography>
           </Grid>
           <Grid item>
@@ -99,7 +101,7 @@ const BankInterest = ({ inputs, setInputs, loanAmount, currencySwitch }) => {
 
         {isExpanded && (
           <Typography variant="body2" sx={{ mt: 1, mb: 2 }}>
-            Monthly Interest: {currencySwitch ? "HK$" : "$"}
+            {t('Monthly_Interest')}: {currencySwitch ? "HK$" : "$"}
             {(inputs.monthlyInterestPayment * (currencySwitch ? 7.8 : 1)).toFixed(2)}
           </Typography>
         )}
