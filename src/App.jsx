@@ -174,7 +174,7 @@ const App = () => {
                 </Typography>
               </Toolbar>
             </AppBar>
-        <Grid container spacing={{ xs: 0, md: 3 }}> {/* Remove spacing on mobile */}
+        <Grid container spacing={{ xs: 0, md: 2 }}> {/* Remove spacing on mobile */}
           {/* Mobile & Desktop Structure */}
           <Grid item xs={12} md={9}>
             <Grid container direction="column" spacing={{ xs: 2, md: 3 }}>

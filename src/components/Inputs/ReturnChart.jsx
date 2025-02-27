@@ -357,7 +357,7 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
               {viewMode === 'Net Cash' ? t('Value after Repayment') : t(viewMode)}
             </Typography>
           </Grid>
-          <Grid item xs={12} style={{ position: 'relative', height: '700px' }}>
+          <Grid item xs={12} style={{ position: 'relative', height: '600px' }}>
             <canvas ref={chartRef} />
           </Grid>
         </Grid>
