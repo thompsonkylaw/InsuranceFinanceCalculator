@@ -163,7 +163,7 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
               borderColor: 'transparent',
               font: { size: 16, weight: 'bold' },
               position: 'center',
-              yAdjust: -10
+              yAdjust: -20
             };
           } else {
             const returnRate = parseFloat(tableData.returnRate[index - 1]) || 0;
@@ -179,7 +179,7 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
               borderColor: 'transparent',
               font: { size: 16, weight: 'bold' },
               position: 'center',
-              yAdjust: -20
+              yAdjust: -30
             };
           }
         } else if (viewMode === 'Principal vs Net Return') {
@@ -196,7 +196,7 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
               borderColor: 'transparent',
               font: { size: 16, weight: 'bold' },
               position: 'center',
-              yAdjust: -10
+              yAdjust: -20
             };
           } else {
             const returnRate = parseFloat(tableData.returnRate[index - 1]) || 0;
@@ -212,7 +212,7 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
               borderColor: 'transparent',
               font: { size: 16, weight: 'bold' },
               position: 'center',
-              yAdjust: -20
+              yAdjust: -30
             };
           }
         } else if (viewMode === 'Net Cash') {
@@ -228,7 +228,7 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
               borderColor: 'transparent',
               font: { size: 16, weight: 'bold' },
               position: 'center',
-              yAdjust: -10
+              yAdjust: -20
             };
           } else {
             const gain = principal !== 0 ? netCash / principal : 0;
@@ -244,7 +244,7 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
               borderColor: 'transparent',
               font: { size: 16, weight: 'bold' },
               position: 'center',
-              yAdjust: -20
+              yAdjust: -30
             };
           }
         }
@@ -357,7 +357,7 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
               {viewMode === 'Net Cash' ? t('Value after Repayment') : t(viewMode)}
             </Typography>
           </Grid>
-          <Grid item xs={12} style={{ position: 'relative', height: '400px' }}>
+          <Grid item xs={12} style={{ position: 'relative', height: '700px' }}>
             <canvas ref={chartRef} />
           </Grid>
         </Grid>

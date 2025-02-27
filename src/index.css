@@ -80,4 +80,14 @@ button:focus-visible {
  .css-taqjlb .MuiBox-root .MuiInputAdornment-standard{
   padding-top:7px;
  }
+
+
+ /* Mui grid item */
+ div .MuiBox-root > .MuiGrid-container > .MuiGrid-item{
+  top:-17px;
+ }
  
+ div .MuiBox-root .MuiGrid-container .MuiGrid-item > .MuiGrid-direction-xs-column{
+  position:relative;
+  top:26px;
+ }

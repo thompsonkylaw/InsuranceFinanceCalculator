@@ -1,5 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { ThemeProvider, createTheme, Grid, Box } from '@mui/material';
+import {
+  ThemeProvider,
+  createTheme,
+  Grid,
+  Box,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  AppBar,
+  Toolbar,
+  IconButton,
+  Typography,
+
+} from '@mui/material';
+import {
+  Home as HomeIcon,
+  Assessment as AssessmentIcon,
+  People as PeopleIcon,
+  Settings as SettingsIcon,
+  Help as HelpIcon,
+  ArrowBack as ArrowBackIcon,
+} from '@mui/icons-material';
 import CssBaseline from '@mui/material/CssBaseline';
 import PremiumInput from './components/Inputs/PremiumInput';
 import BankInterest from './components/Inputs/BankInterest';
@@ -141,6 +164,16 @@ const App = () => {
         minHeight: '100vh',
         backgroundColor: 'background.default'
       }}>
+        <AppBar position="static" sx={{ backgroundColor: '#1976d2' }}>
+              <Toolbar>
+                <IconButton edge="start" color="inherit" aria-label="back">
+                  <ArrowBackIcon />
+                </IconButton>
+                <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                  保費融資
+                </Typography>
+              </Toolbar>
+            </AppBar>
         <Grid container spacing={{ xs: 0, md: 3 }}> {/* Remove spacing on mobile */}
           {/* Mobile & Desktop Structure */}
           <Grid item xs={12} md={9}>
