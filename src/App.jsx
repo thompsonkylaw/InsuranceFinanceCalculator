@@ -21,7 +21,7 @@ const theme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          overflow: 'visible' // Ensures cards can expand properly
+          overflow: 'visible', // Ensures cards can expand properly
           
         }
       }
@@ -197,9 +197,15 @@ const App = () => {
                   currencySwitch = {currencySwitch}
                 />
               </Grid>
+              <Grid item sx={{ width: '100%' }}>
+              <p>
+              免責聲明:以上簡化版計算僅供參考用途，一切以各產品條款內容為准 *年化收益 僅基於初期本金、最終淨回報及年期計算
+              </p>
+              </Grid>
               <Grid item sx={{ display: { xs: 'block', md: 'none' }, width: '100%' }}>
                   <LanguageSwitcher onReset={resetAllInputs} />
               </Grid>
+              
             </Grid>
           </Grid>
 
@@ -233,6 +239,7 @@ const App = () => {
               <Grid item>
                   <LanguageSwitcher onReset={resetAllInputs} />
               </Grid>
+              
             </Grid>
           </Grid>
         </Grid>

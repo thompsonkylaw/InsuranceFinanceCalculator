@@ -50,15 +50,13 @@ const TermsAndCashValue = ({ inputs, setInputs,currencySwitch }) => {
   return (
     <Card sx={{ p: 2, borderRadius: 3, boxShadow: 3, mt: 2 }}>
     <CardContent>
-      <Typography variant="h6" gutterBottom>
-        {t('Terms_Cash_Values')}
-      </Typography>
+   
       
       {terms.map((term, index) => {
         const cashValue = index < cashValues.length ? cashValues[index] : 0;
           
           return (
-            <Grid container spacing={2} key={index} sx={{ mb: 2 }}>
+            <Grid container spacing={1} key={index} sx={{ mb: 2 }}>
             <Grid item xs={6}>
               <TextField
                 fullWidth
@@ -66,7 +64,10 @@ const TermsAndCashValue = ({ inputs, setInputs,currencySwitch }) => {
                 label={`${t('Term')} ${index + 1}`}
                 value={term}
                 onChange={handleTermChange(index)}
-                variant="outlined"
+                variant="standard"
+                InputLabelProps={{
+                  sx: { fontSize: '21px', fontWeight: 'bold' },
+                }}
                 InputProps={{
                   readOnly: currencySwitch,
                 }}
@@ -74,6 +75,7 @@ const TermsAndCashValue = ({ inputs, setInputs,currencySwitch }) => {
                   '& .MuiInputBase-input.Mui-disabled': {
                     WebkitTextFillColor: 'inherit',
                     opacity: 1,
+                   
                   },
                 }}
               >
@@ -91,7 +93,10 @@ const TermsAndCashValue = ({ inputs, setInputs,currencySwitch }) => {
                 label={`${t('Cash_Value')} ${index + 1}`}
                 value={formatCurrency(cashValue)}
                 onChange={handleCashValueChange(index)}
-                variant="outlined"
+                variant="standard"
+                InputLabelProps={{
+                  sx: { fontSize: '21px', fontWeight: 'bold' },
+                }}
                 InputProps={{
                   readOnly: currencySwitch,
                   'aria-label': `Cash Value ${index + 1} input`,

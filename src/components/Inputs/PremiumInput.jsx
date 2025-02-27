@@ -113,6 +113,9 @@ const PremiumInput = ({ inputs, setInputs, currencySwitch }) => {
                 variant="standard"
                 value={formatCurrency(inputs.premium)}
                 onChange={handleDirectEdit('premium')}
+                InputLabelProps={{
+                  sx: { fontSize: '22px', fontWeight: 'bold' },
+                }}
                 InputProps={{ readOnly: currencySwitch }}
                 sx={{
                   '& .MuiInputBase-input.Mui-disabled': {
@@ -148,12 +151,16 @@ const PremiumInput = ({ inputs, setInputs, currencySwitch }) => {
               <TextField
                 
                 fullWidth
+                InputLabelProps={{
+                  sx: { fontSize: '22px', fontWeight: 'bold' },
+                }}
                 label={
                   <Box display="flex" alignItems="center" gap={0.5}>
                     <Button
                       variant="outlined"
                       size="small"
-                      sx={{ p: '2px', minWidth: 0, lineHeight: 1, cursor: currencySwitch ? 'not-allowed' : 'pointer' }}
+                      
+                      sx={{   fontWeight: 'bold', fontSize: '21px', p: '2px', minWidth: 0, lineHeight: 1, cursor: currencySwitch ? 'not-allowed' : 'pointer' }}
                       onClick={currencySwitch ? undefined : handleLoanRateToggle}
                       disabled={currencySwitch}
                     >
@@ -162,6 +169,7 @@ const PremiumInput = ({ inputs, setInputs, currencySwitch }) => {
                     <span>({t('Amount')})</span>
                   </Box>
                 }
+                
                 inputRef={loanRateInputRef} // Use inputRef instead of ref
                 variant="standard"
                 value={`${inputs.loanRate.toFixed(0)}%`}
@@ -181,6 +189,7 @@ const PremiumInput = ({ inputs, setInputs, currencySwitch }) => {
                     opacity: 1,
                   },
                 }}
+                
                 inputProps={{ 'aria-label': 'Loan percentage input' }}
               />
             </Box>
@@ -193,6 +202,9 @@ const PremiumInput = ({ inputs, setInputs, currencySwitch }) => {
                 variant="standard"
                 value={formatCurrency(inputs.firstYearBonus)}
                 onChange={handleDirectEdit('firstYearBonus')}
+                InputLabelProps={{
+                  sx: { fontSize: '22px', fontWeight: 'bold' },
+                }}
                 InputProps={{ readOnly: currencySwitch }}
                 sx={{
                   '& .MuiInputBase-input.Mui-disabled': {
@@ -212,6 +224,9 @@ const PremiumInput = ({ inputs, setInputs, currencySwitch }) => {
                 variant="standard"
                 value={formatCurrency(inputs.principal)}
                 onChange={handleDirectEdit('principal')}
+                InputLabelProps={{
+                  sx: { fontSize: '22px', fontWeight: 'bold' },
+                }}
                 InputProps={{ readOnly: currencySwitch }}
                 sx={{
                   '& .MuiInputBase-input.Mui-disabled': {

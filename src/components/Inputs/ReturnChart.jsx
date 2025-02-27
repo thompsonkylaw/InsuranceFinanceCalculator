@@ -83,7 +83,8 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
             label: t('Principal'),
             data: [premiumInput.principal, ...termsData.term.map(() => 0)],
             backgroundColor: colors.Principal,
-            stack: 'Stack 0'
+            stack: 'Stack 0',
+            
           },
           {
             label: t('Net Cash'),
@@ -100,6 +101,7 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
             data: [premiumInput.principal, ...termsData.term.map(() => premiumInput.principal)],
             backgroundColor: colors.Principal,
             stack: 'Stack 0'
+            
           },
           {
             label: t('Loan Amount'),
@@ -141,15 +143,30 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
         datasets.reduce((sum, ds) => sum + (ds.data[index] || 0), 0)
       ));
 
-      // Add datalabels configuration for inside bar labels
+      // Add datalabels configuration for inside bar labels ( value)
+      // const updatedDatasets = datasets.map(ds => ({
+      //   ...ds,
+      //   datalabels: {
+      //     anchor: 'center',
+      //     align: 'center',
+      //     color: 'white',
+      //     font: { weight: 'bold', size: 15 },
+      //     formatter: (value) => value ? formatNumber(value) : null
+      //   }
+      // }));
+
+      // Add datalabels configuration for inside bar labels ( legend)
       const updatedDatasets = datasets.map(ds => ({
         ...ds,
         datalabels: {
           anchor: 'center',
           align: 'center',
           color: 'white',
-          font: { weight: 'bold', size: 12 },
-          formatter: (value) => value ? formatNumber(value) : null
+          font: { weight: 'bold', size: 15 },
+          formatter: (value, ctx) => {
+            // Use the dataset's label as the data label
+            return ctx.dataset.label;
+          }
         }
       }));
 
@@ -166,9 +183,9 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
               content: formatNumber(premiumValue),
               backgroundColor: 'transparent',
               borderColor: 'transparent',
-              font: { size: 12, weight: 'bold' },
+              font: { size: 18, weight: 'bold' },
               position: 'center',
-              yAdjust: -20
+              yAdjust: -10
             };
           } else {
             const returnRate = parseFloat(tableData.returnRate[index - 1]) || 0;
@@ -182,9 +199,9 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
               ],
               backgroundColor: 'transparent',
               borderColor: 'transparent',
-              font: { size: 12, weight: 'bold' },
+              font: { size: 18, weight: 'bold' },
               position: 'center',
-              yAdjust: -30
+              yAdjust: -20
             };
           }
         } else if (viewMode === 'Principal vs Net Return') {
@@ -194,14 +211,15 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
           if (index === 0) {
             return {
               type: 'label',
+              
               xValue: index,
               yValue: total,
               content: `${t('Principal')}: ${formatNumber(principal)}`,
               backgroundColor: 'transparent',
               borderColor: 'transparent',
-              font: { size: 12, weight: 'bold' },
+              font: { size: 18, weight: 'bold' },
               position: 'center',
-              yAdjust: -20
+              yAdjust: -10
             };
           } else {
             const returnRate = parseFloat(tableData.returnRate[index - 1]) || 0;
@@ -215,9 +233,9 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
               ],
               backgroundColor: 'transparent',
               borderColor: 'transparent',
-              font: { size: 12, weight: 'bold' },
+              font: { size: 18, weight: 'bold' },
               position: 'center',
-              yAdjust: -30
+              yAdjust: -20
             };
           }
         } else if (viewMode === 'Net Cash') {
@@ -231,9 +249,9 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
               content: `${t('Principal')}: ${formatNumber(principal)}`,
               backgroundColor: 'transparent',
               borderColor: 'transparent',
-              font: { size: 12, weight: 'bold' },
+              font: { size: 18, weight: 'bold' },
               position: 'center',
-              yAdjust: -20
+              yAdjust: -10
             };
           } else {
             const gain = principal !== 0 ? netCash / principal : 0;
@@ -247,9 +265,9 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
               ],
               backgroundColor: 'transparent',
               borderColor: 'transparent',
-              font: { size: 12, weight: 'bold' },
+              font: { size: 18, weight: 'bold' },
               position: 'center',
-              yAdjust: -30
+              yAdjust: -20
             };
           }
         }
@@ -269,15 +287,28 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
         scales: {
           x: {
             stacked: true,
-            title: { display: true, text: t('Term Year') }
+            title: { 
+              display: true, 
+              text: t('Term Year'), 
+              font: { size: 28 } // Increase font size for x-axis title
+            },
+            ticks: {
+              font: { size: 18 }, // Increase font size for x-axis ticks (labels)
+            }
           },
           y: {
             stacked: true,
-            title: { display: true, text: currencySwitch ? `${t('Amount')} (HKD)` : `${t('Amount')} (USD)` },
+      title: { 
+        display: true, 
+        text: currencySwitch ? `${t('Amount')} (HKD)` : `${t('Amount')} (USD)`, 
+        font: { size: 18 } // Increase font size for y-axis title
+      },
             ticks: {
+              font: { size: 15 },
               callback: (value) => formatNumber(value)
             },
-            max: maxTotal * 1.2
+            max: maxTotal * 1.2,
+            
           }
         },
         plugins: {
@@ -291,7 +322,14 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
               }
             }
           },
-          legend: { position: 'bottom', labels: { boxWidth: 20, padding: 20 } },
+          legend: { 
+            position: 'bottom', 
+            labels: { 
+              boxWidth: 20, 
+              padding: 20,
+              font: { size: 18 } // Increase font size for legend labels
+            }
+          },
           annotation: { annotations }
         }
       };

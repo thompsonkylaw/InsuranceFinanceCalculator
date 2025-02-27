@@ -116,6 +116,7 @@ const TermsTable = ({ termsAndCashValue, premiumInput, bankInterest, tableData, 
                 {['Year', 'Principal', 'Total_Expense', 'Cash_Value', 'Net_Cash', 'Return'].map(
                   (header, index) => (
                     <TableCell
+                    sx={{ fontSize: '18px', fontWeight: 'bold'  }}
                       key={header}
                       align="center"
                       style={{ borderBottom: `6px solid ${headerColors[index]}` }}
@@ -134,24 +135,34 @@ const TermsTable = ({ termsAndCashValue, premiumInput, bankInterest, tableData, 
                 return (
                   <React.Fragment key={data.term}>
                     <TableRow>
-                      <TableCell align="center">{data.term}</TableCell>
-                      <TableCell align="center">{formatNumber(premiumInput.principal)}</TableCell>
-                      <TableCell align="center">{formatNumber(data.totalExpense)}</TableCell>
-                      <TableCell align="center">{formatNumber(data.cashValue)}</TableCell>
-                      <TableCell align="center">{formatNumber(data.netCash)}</TableCell>
+                      <TableCell align="center" sx={{ fontSize: '18px',  }}>{data.term}</TableCell>
+                      <TableCell align="center" sx={{ fontSize: '18px',  }}>{formatNumber(premiumInput.principal)}</TableCell>
+                      <TableCell align="center"sx={{ fontSize: '18px',  }}>{formatNumber(data.totalExpense)}</TableCell>
+                      <TableCell align="center"sx={{ fontSize: '18px',  }}>{formatNumber(data.cashValue)}</TableCell>
+                      <TableCell align="center"sx={{ fontSize: '18px',  }}>{formatNumber(data.netCash)}</TableCell>
                       <TableCell align="center">
                         <Grid container alignItems="center" justifyContent="center">
                           <Grid item xs={10}>
                             <Grid container spacing={1} alignItems="center" justifyContent="center">
                               <Grid item>
-                                <Typography variant="body2">
+                                <Typography variant="body2" sx={{ fontSize: '18px',  }}>
                                   {formatNumber(data.returnInDollar)}
                                 </Typography>
                               </Grid>
                               <Grid item>
-                                <Typography color="primary">
-                                  {data.returnRate.toFixed(2)}%
-                                </Typography>
+                                   <Typography
+                              sx={{
+                                fontSize: '20px',
+                                backgroundColor: 'green', // 藍色背景
+                                color: 'white', // 白色文字
+                                borderRadius: '8px', // 圓角
+                                padding: '4px 8px', // 內距
+                                display: 'inline-block', // 讓它不佔滿整行
+                              }}
+                            >
+                              {data.returnRate.toFixed(2)}%
+                            </Typography>
+
                               </Grid>
                               {isExpanded && (
                                 <Grid item>
