@@ -160,7 +160,7 @@ const PremiumInput = ({ inputs, setInputs, currencySwitch }) => {
                       variant="outlined"
                       size="small"
                       
-                      sx={{   fontWeight: 'bold', fontSize: '21px', p: '2px', minWidth: 0, lineHeight: 1, cursor: currencySwitch ? 'not-allowed' : 'pointer' }}
+                      sx={{   fontWeight: 'bold',fontSize: '21px', p: '2px', minWidth: 0, lineHeight: 1, cursor: currencySwitch ? 'not-allowed' : 'pointer' }}
                       onClick={currencySwitch ? undefined : handleLoanRateToggle}
                       disabled={currencySwitch}
                     >

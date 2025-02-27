@@ -72,7 +72,12 @@ button:focus-visible {
   position:relative;
   top:-30px;
  }
+ .css-taqjlb .MuiBox-root input[type=text]{
+  transform:translatex(0px) translatey(0px);
+  padding-top:13px;
+ }
  
- 
- 
+ .css-taqjlb .MuiBox-root .MuiInputAdornment-standard{
+  padding-top:7px;
+ }
  

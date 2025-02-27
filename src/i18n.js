@@ -49,6 +49,7 @@ i18next
           "Net Cash": 'Net Cash',
           "Total Expense": 'Total Expense',
           "Reset Data": 'Reset Data',
+          displaySwitch:'Show Figure',
         }
       },
       "zh-HK": {
@@ -92,6 +93,7 @@ i18next
           "Loan Amount": '貸款金額',
           "Total Expense": '總支出',
           "Reset Data": '還原數據',
+          displaySwitch:'顯示數值',
         }
       },
       "zh-CN": {
@@ -135,6 +137,7 @@ i18next
           "Loan Amount": '贷款金额',
           "Total Expense": '总支出',
           "Reset Data": '还原数据',
+          displaySwitch:'显示数值',
         }
       }
     }

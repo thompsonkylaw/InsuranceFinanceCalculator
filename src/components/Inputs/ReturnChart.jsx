@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from 'react';
+
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Card,
@@ -7,22 +8,22 @@ import {
   Typography,
   Select,
   MenuItem,
-  InputBase
+  InputBase,
+  Box,
+  Switch
 } from '@mui/material';
 import { ExpandMore } from '@mui/icons-material';
 import Chart from 'chart.js/auto';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import annotationPlugin from 'chartjs-plugin-annotation';
-
 // Register Chart.js plugins
 Chart.register(ChartDataLabels, annotationPlugin);
-
 const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => {
   const { t, i18n } = useTranslation();
-  const [viewMode, setViewMode] = React.useState('Return Detail');
+  const [viewMode, setViewMode] = useState('Return Detail');
+  const [displaySwitch, setDisplaySwitch] = useState(true); // State for toggling display
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
-
   // Define colors for each dataset
   const colors = {
     Principal: 'rgb(57, 102, 248)',
@@ -31,32 +32,27 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
     Return: 'rgb(15, 175, 63)',
     NetCash: 'rgb(62, 199, 248)'
   };
-
   // Convert currency based on currencySwitch (USD to HKD if true)
   const convertCurrency = (value) => {
     return currencySwitch ? value * 7.8 : value;
   };
-
   // Enhanced formatNumber function with language detection
   const formatNumber = (num) => {
     if (num === null || num === undefined) return '';
     const absNum = Math.abs(num);
     const roundedNum = Math.round(absNum);
-
     // Detect current language from i18n
     const lang = i18n.language;
-   
     if (lang.startsWith('zh')) {
       // Chinese formatting: use "萬" (Traditional) or "万" (Simplified) for ≥ 10,000
       const isTraditional = lang === 'zh-HK';
-      
       if (absNum >= 10000) {
         const wanValue = (absNum / 10000).toFixed(1).replace(/\.0$/, '');
         return `${num < 0 ? '-' : ''}${wanValue}${isTraditional ? '萬' : '万'}`;
       }
       return num.toString(); // No suffix for < 10,000
     } else {
-      // English (and default) formatting: use commas and "K" for thousands
+      // English formatting: use commas and "K" for thousands
       if (absNum >= 1000) {
         const kValue = Math.round(absNum / 1000);
         return `${num < 0 ? '-' : ''}${kValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}K`;
@@ -64,18 +60,15 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
       return num.toString();
     }
   };
-
   useEffect(() => {
     if (chartRef.current) {
       const ctx = chartRef.current.getContext('2d');
       if (chartInstance.current) {
         chartInstance.current.destroy();
       }
-
       // Generate labels for x-axis with translation
       const labels = [t('Year 0'), ...termsData.term.map(term => `${t('Yearth', { year: term })} `)];
       let datasets = [];
-
       // Configure datasets based on viewMode
       if (viewMode === 'Net Cash') {
         datasets = [
@@ -84,7 +77,6 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
             data: [premiumInput.principal, ...termsData.term.map(() => 0)],
             backgroundColor: colors.Principal,
             stack: 'Stack 0',
-            
           },
           {
             label: t('Net Cash'),
@@ -101,7 +93,6 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
             data: [premiumInput.principal, ...termsData.term.map(() => premiumInput.principal)],
             backgroundColor: colors.Principal,
             stack: 'Stack 0'
-            
           },
           {
             label: t('Loan Amount'),
@@ -131,45 +122,32 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
           datasets = datasets.filter(d => [t('Principal'), t('Return')].includes(d.label));
         }
       }
-
       // Apply currency conversion to all dataset values
       datasets = datasets.map(ds => ({
         ...ds,
         data: ds.data.map(value => convertCurrency(value))
       }));
-
       // Calculate the maximum total value across all labels
       const maxTotal = Math.max(...labels.map((_, index) =>
         datasets.reduce((sum, ds) => sum + (ds.data[index] || 0), 0)
       ));
-
-      // Add datalabels configuration for inside bar labels ( value)
-      // const updatedDatasets = datasets.map(ds => ({
-      //   ...ds,
-      //   datalabels: {
-      //     anchor: 'center',
-      //     align: 'center',
-      //     color: 'white',
-      //     font: { weight: 'bold', size: 15 },
-      //     formatter: (value) => value ? formatNumber(value) : null
-      //   }
-      // }));
-
-      // Add datalabels configuration for inside bar labels ( legend)
+      // Add datalabels configuration for inside bar labels
       const updatedDatasets = datasets.map(ds => ({
         ...ds,
         datalabels: {
           anchor: 'center',
           align: 'center',
           color: 'white',
-          font: { weight: 'bold', size: 15 },
+          font: { weight: 'bold', size: 15 },//in bar text
           formatter: (value, ctx) => {
-            // Use the dataset's label as the data label
-            return ctx.dataset.label;
+            if (displaySwitch) {
+              return value ? formatNumber(value) : null;
+            } else {
+              return ctx.dataset.label;
+            }
           }
         }
       }));
-
       // Create annotations for top labels based on viewMode
       const annotations = labels.map((label, index) => {
         if (viewMode === 'Return Detail') {
@@ -183,7 +161,7 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
               content: formatNumber(premiumValue),
               backgroundColor: 'transparent',
               borderColor: 'transparent',
-              font: { size: 18, weight: 'bold' },
+              font: { size: 16, weight: 'bold' },
               position: 'center',
               yAdjust: -10
             };
@@ -199,7 +177,7 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
               ],
               backgroundColor: 'transparent',
               borderColor: 'transparent',
-              font: { size: 18, weight: 'bold' },
+              font: { size: 16, weight: 'bold' },
               position: 'center',
               yAdjust: -20
             };
@@ -211,13 +189,12 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
           if (index === 0) {
             return {
               type: 'label',
-              
               xValue: index,
               yValue: total,
               content: `${t('Principal')}: ${formatNumber(principal)}`,
               backgroundColor: 'transparent',
               borderColor: 'transparent',
-              font: { size: 18, weight: 'bold' },
+              font: { size: 16, weight: 'bold' },
               position: 'center',
               yAdjust: -10
             };
@@ -233,7 +210,7 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
               ],
               backgroundColor: 'transparent',
               borderColor: 'transparent',
-              font: { size: 18, weight: 'bold' },
+              font: { size: 16, weight: 'bold' },
               position: 'center',
               yAdjust: -20
             };
@@ -249,7 +226,7 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
               content: `${t('Principal')}: ${formatNumber(principal)}`,
               backgroundColor: 'transparent',
               borderColor: 'transparent',
-              font: { size: 18, weight: 'bold' },
+              font: { size: 16, weight: 'bold' },
               position: 'center',
               yAdjust: -10
             };
@@ -265,7 +242,7 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
               ],
               backgroundColor: 'transparent',
               borderColor: 'transparent',
-              font: { size: 18, weight: 'bold' },
+              font: { size: 16, weight: 'bold' },
               position: 'center',
               yAdjust: -20
             };
@@ -273,7 +250,6 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
         }
         return null;
       }).filter(a => a !== null);
-
       // Chart data and options
       const chartData = { labels, datasets: updatedDatasets };
       const options = {
@@ -290,25 +266,24 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
             title: { 
               display: true, 
               text: t('Term Year'), 
-              font: { size: 28 } // Increase font size for x-axis title
+              font: { size: 28 } 
             },
             ticks: {
-              font: { size: 18 }, // Increase font size for x-axis ticks (labels)
+              font: { size: 18 },
             }
           },
           y: {
             stacked: true,
-      title: { 
-        display: true, 
-        text: currencySwitch ? `${t('Amount')} (HKD)` : `${t('Amount')} (USD)`, 
-        font: { size: 18 } // Increase font size for y-axis title
-      },
+            title: { 
+              display: true, 
+              text: currencySwitch ? `${t('Amount')} (HKD)` : `${t('Amount')} (USD)`, 
+              font: { size: 18 } 
+            },
             ticks: {
               font: { size: 15 },
               callback: (value) => formatNumber(value)
             },
             max: maxTotal * 1.2,
-            
           }
         },
         plugins: {
@@ -327,42 +302,55 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
             labels: { 
               boxWidth: 20, 
               padding: 20,
-              font: { size: 18 } // Increase font size for legend labels
+              font: { size: 18 } 
             }
           },
           annotation: { annotations }
         }
       };
-
       chartInstance.current = new Chart(ctx, {
         type: 'bar',
         data: chartData,
         options: options
       });
     }
-
     return () => {
       if (chartInstance.current) {
         chartInstance.current.destroy();
       }
     };
-  }, [termsData, premiumInput, tableData, viewMode, currencySwitch, i18n.language]);
-
+  }, [termsData, premiumInput, tableData, viewMode, currencySwitch, i18n.language,displaySwitch]);
+  // Effect to update chart when displaySwitch changes
+  // useEffect(() => {
+  //   if (chartInstance.current) {
+  //     chartInstance.current.update();
+  //   }
+  // }, [displaySwitch]);
   return (
     <Card>
       <CardContent>
         <Grid container spacing={1}>
           <Grid item xs={12} style={{ textAlign: 'end' }}>
             <Select
+              
               value={viewMode}
               onChange={(e) => setViewMode(e.target.value)}
-              input={<InputBase style={{ fontSize: 12 }} />}
+              input={<InputBase style={{ fontSize: 20, fontWeight: '500' }}/>}
               IconComponent={ExpandMore}
             >
               <MenuItem value="Return Detail">{t('Return Detail')}</MenuItem>
               <MenuItem value="Principal vs Net Return">{t('Principal vs Net Return')}</MenuItem>
               <MenuItem value="Net Cash">{t('Net Cash')}</MenuItem>
             </Select>
+            <Box display="inline-flex" alignItems="center" ml={2}>
+              <Typography variant="body2" style={{ fontSize: 20, fontWeight: '500' }}>{t('displaySwitch')}</Typography>
+              <Switch
+                
+                checked={displaySwitch}
+                onChange={() => setDisplaySwitch(!displaySwitch)}
+                color="primary"
+              />
+            </Box>
           </Grid>
           <Grid item xs={12}>
             <Typography align="center" variant="body1">
@@ -377,5 +365,4 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
     </Card>
   );
 };
-
 export default ReturnChart;

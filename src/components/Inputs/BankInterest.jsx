@@ -112,8 +112,8 @@ const BankInterest = ({ inputs, setInputs, loanAmount, currencySwitch }) => {
           onChangeCommitted={handleSliderChangeCommitted} // Updates parent state on release
           disabled={currencySwitch}
           step={0.125}
-          marks
-          min={0.125}
+          
+          min={0}
           max={10}
           valueLabelDisplay="auto"
           sx={{
