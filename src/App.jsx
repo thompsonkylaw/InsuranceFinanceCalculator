@@ -177,7 +177,7 @@ const App = () => {
                   currencySwitch = {currencySwitch}
                 />
               </Grid>
-
+              
               {/* Chart and Table */}
               <Grid item sx={{ width: '100%' }}>
                 <ReturnChart 
@@ -197,7 +197,7 @@ const App = () => {
                   currencySwitch = {currencySwitch}
                 />
               </Grid>
-              <Grid item>
+              <Grid item sx={{ display: { xs: 'block', md: 'none' }, width: '100%' }}>
                   <LanguageSwitcher onReset={resetAllInputs} />
               </Grid>
             </Grid>
