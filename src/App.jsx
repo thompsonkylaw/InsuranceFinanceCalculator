@@ -170,7 +170,7 @@ const App = () => {
                   <ArrowBackIcon />
                 </IconButton>
                 <Typography variant="h6" sx={{ flexGrow: 1 }}>
-                  保費融資 Owen
+                  保費融資
                 </Typography>
               </Toolbar>
             </AppBar>
