@@ -35,7 +35,7 @@ const Currency = ({ switch: isHkd, setInputs }) => {
                         checked={isHkd}
                         onChange={handleChange}
                         name="isCurrencyEnabled"
-                        color="primary"
+                        color="#219a52"
                       />
                     }
                     label={

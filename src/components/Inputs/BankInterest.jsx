@@ -74,7 +74,7 @@ const BankInterest = ({ inputs, setInputs, loanAmount, currencySwitch }) => {
                 background: "transparent",
                 fontSize: "1rem",
                 fontWeight: "bold",
-                color: currencySwitch ? "#999" : "#1976d2",
+                color: currencySwitch ? "#999" : "#219a52",
                 textAlign: "right",
                 cursor: currencySwitch ? "not-allowed" : "auto",
               }}
@@ -120,10 +120,10 @@ const BankInterest = ({ inputs, setInputs, loanAmount, currencySwitch }) => {
             "& .MuiSlider-thumb": {
               borderRadius: "50%",
               border: currencySwitch ? "2px solid #999" : "2px solid blue",
-              bgcolor: currencySwitch ? "#fff" : "blue",
+              bgcolor: currencySwitch ? "#fff" : "#219a52",
             },
             "& .MuiSlider-track": {
-              bgcolor: currencySwitch ? "#999" : "blue",
+              bgcolor: currencySwitch ? "#999" : "#219a52",
             },
             "& .MuiSlider-rail": {
               bgcolor: "#d3d3d3",

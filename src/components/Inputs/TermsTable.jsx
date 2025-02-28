@@ -64,11 +64,11 @@ const TermsTable = ({ termsAndCashValue, premiumInput, bankInterest, tableData, 
 
   const termsData = termsAndCashValue.term.map((term, index) => ({
     term,
-    cashValue: termsAndCashValue.cashValue[index],
-    totalExpense: tableData.totalExpense[index],
-    netCash: tableData.netCash[index],
-    returnInDollar: tableData.returnInDollar[index],
-    returnRate: tableData.returnRate[index]
+    cashValue: termsAndCashValue.cashValue[index] || 0,
+    totalExpense: tableData.totalExpense[index] || 0,
+    netCash: tableData.netCash[index] || 0,
+    returnInDollar: tableData.returnInDollar[index] || 0,
+    returnRate: tableData.returnRate[index] || 0
   }));
 
   const toggleRow = (index, event) => {
