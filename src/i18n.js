@@ -47,6 +47,7 @@ i18next
           "Year 0": "Year 0",
           "Cash Value": 'Cash Value',
           "Net Cash": 'Net Cash',
+          "Loan Amount": 'Loan Amount',
           "Total Expense": 'Total Expense',
           "Reset Data": 'Reset Data',
           displaySwitch:'Show Figure',
