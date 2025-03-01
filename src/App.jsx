@@ -56,7 +56,6 @@ const App = () => {
   const [undoStack, setUndoStack] = useState(initialVersionState.undoStack);
   const [redoStack, setRedoStack] = useState(initialVersionState.redoStack);
 
-  // Ensure a version is always selected
   useEffect(() => {
     if (!currentVersion) {
       setCurrentVersion(1);
@@ -148,17 +147,68 @@ const App = () => {
           </Toolbar>
         </AppBar>
         <Grid container spacing={{ xs: 3, md: 2 }}>
-          <Grid item xs={12} md={9}>
+          {/* Main Content Column */}
+          <Grid item xs={12} sm={8} md={9}>
             <Grid container direction="column" spacing={{ xs: 2, md: 3 }}>
-              <Grid item><PremiumInput inputs={premiumInput} setInputs={setPremiumInput} saveToUndoStack={saveToUndoStack} currencySwitch={currencySwitch} /></Grid>
-              <Grid item sx={{ display: { xs: 'block', md: 'none' } }}><Currency switch={currencySwitch} setInputs={setCurrencySwitch} saveToUndoStack={saveToUndoStack} /></Grid>
-              <Grid item sx={{ display: { xs: 'block', md: 'none' } }}><BankInterest inputs={bankInterestInput} setInputs={setBankInterestInput} saveToUndoStack={saveToUndoStack} loanAmount={premiumInput.loanAmount || 0} currencySwitch={currencySwitch} /></Grid>
-              <Grid item sx={{ display: { xs: 'block', md: 'none' } }}><TermsAndCashValue inputs={termsAndCashValue} setInputs={setTermsAndCashValue} saveToUndoStack={saveToUndoStack} currencySwitch={currencySwitch} /></Grid>
-              <Grid item><ReturnChart premiumInput={premiumInput} termsData={termsAndCashValue} tableData={tableData} currencySwitch={currencySwitch} /></Grid>
-              <Grid item><TermsTable termsAndCashValue={termsAndCashValue} premiumInput={premiumInput} bankInterest={bankInterestInput} tableData={tableData} setInputs={setTableData} currencySwitch={currencySwitch} /></Grid>
-              <Grid item><p>免責聲明:以上簡化版計算僅供參考用途，一切以各產品條款內容為准 *年化收益 僅基於初期本金、最終淨回報及年期計算</p></Grid>
+              <Grid item>
+                <PremiumInput
+                  inputs={premiumInput}
+                  setInputs={setPremiumInput}
+                  saveToUndoStack={saveToUndoStack}
+                  currencySwitch={currencySwitch}
+                />
+              </Grid>
+              {/* Side components for mobile view only */}
+              <Grid item sx={{ display: { xs: 'block', sm: 'none' } }}>
+                <Currency
+                  switch={currencySwitch}
+                  setInputs={setCurrencySwitch}
+                  saveToUndoStack={saveToUndoStack}
+                />
+              </Grid>
+              <Grid item sx={{ display: { xs: 'block', sm: 'none' } }}>
+                <BankInterest
+                  inputs={bankInterestInput}
+                  setInputs={setBankInterestInput}
+                  saveToUndoStack={saveToUndoStack}
+                  loanAmount={premiumInput.loanAmount || 0}
+                  currencySwitch={currencySwitch}
+                />
+              </Grid>
+              <Grid item sx={{ display: { xs: 'block', sm: 'none' } }}>
+                <TermsAndCashValue
+                  inputs={termsAndCashValue}
+                  setInputs={setTermsAndCashValue}
+                  saveToUndoStack={saveToUndoStack}
+                  currencySwitch={currencySwitch}
+                />
+              </Grid>
+              <Grid item>
+                <ReturnChart
+                  premiumInput={premiumInput}
+                  termsData={termsAndCashValue}
+                  tableData={tableData}
+                  currencySwitch={currencySwitch}
+                />
+              </Grid>
+              <Grid item>
+                <TermsTable
+                  termsAndCashValue={termsAndCashValue}
+                  premiumInput={premiumInput}
+                  bankInterest={bankInterestInput}
+                  tableData={tableData}
+                  setInputs={setTableData}
+                  currencySwitch={currencySwitch}
+                />
+              </Grid>
+              <Grid item>
+                <p>
+                  免責聲明:以上簡化版計算僅供參考用途，一切以各產品條款內容為准 *年化收益
+                  僅基於初期本金、最終淨回報及年期計算
+                </p>
+              </Grid>
               {/* LanguageSwitcher for mobile view */}
-              <Grid item sx={{ display: { xs: 'block', md: 'none' } }}>
+              <Grid item sx={{ display: { xs: 'block', sm: 'none' } }}>
                 <LanguageSwitcher
                   onReset={resetAllInputs}
                   handleVersionSwitch={handleVersionSwitch}
@@ -171,12 +221,33 @@ const App = () => {
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={12} md={3} sx={{ display: { xs: 'none', md: 'block' } }}>
+          {/* Side Column for Tablets and Desktops */}
+          <Grid item xs={12} sm={4} md={3} sx={{ display: { xs: 'none', sm: 'block' } }}>
             <Grid container direction="column" spacing={3}>
-              <Grid item><Currency switch={currencySwitch} setInputs={setCurrencySwitch} saveToUndoStack={saveToUndoStack} /></Grid>
-              <Grid item><BankInterest inputs={bankInterestInput} setInputs={setBankInterestInput} saveToUndoStack={saveToUndoStack} loanAmount={premiumInput.loanAmount || 0} currencySwitch={currencySwitch} /></Grid>
-              <Grid item><TermsAndCashValue inputs={termsAndCashValue} setInputs={setTermsAndCashValue} saveToUndoStack={saveToUndoStack} currencySwitch={currencySwitch} /></Grid>
-              {/* LanguageSwitcher for desktop view */}
+              <Grid item>
+                <Currency
+                  switch={currencySwitch}
+                  setInputs={setCurrencySwitch}
+                  saveToUndoStack={saveToUndoStack}
+                />
+              </Grid>
+              <Grid item>
+                <BankInterest
+                  inputs={bankInterestInput}
+                  setInputs={setBankInterestInput}
+                  saveToUndoStack={saveToUndoStack}
+                  loanAmount={premiumInput.loanAmount || 0}
+                  currencySwitch={currencySwitch}
+                />
+              </Grid>
+              <Grid item>
+                <TermsAndCashValue
+                  inputs={termsAndCashValue}
+                  setInputs={setTermsAndCashValue}
+                  saveToUndoStack={saveToUndoStack}
+                  currencySwitch={currencySwitch}
+                />
+              </Grid>
               <Grid item>
                 <LanguageSwitcher
                   onReset={resetAllInputs}

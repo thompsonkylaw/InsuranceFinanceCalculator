@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -18,12 +17,14 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import annotationPlugin from 'chartjs-plugin-annotation';
 // Register Chart.js plugins
 Chart.register(ChartDataLabels, annotationPlugin);
+
 const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => {
   const { t, i18n } = useTranslation();
   const [viewMode, setViewMode] = useState('Return Detail');
   const [displaySwitch, setDisplaySwitch] = useState(true); // State for toggling display
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
+
   // Define colors for each dataset
   const colors = {
     Principal: 'rgb(57, 102, 248)',
@@ -32,10 +33,12 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
     Return: 'rgb(15, 175, 63)',
     NetCash: 'rgb(62, 199, 248)'
   };
+
   // Convert currency based on currencySwitch (USD to HKD if true)
   const convertCurrency = (value) => {
     return currencySwitch ? value * 7.8 : value;
   };
+
   // Enhanced formatNumber function with language detection
   const formatNumber = (num) => {
     if (num === null || num === undefined) return '';
@@ -60,15 +63,19 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
       return num.toString();
     }
   };
+
   useEffect(() => {
     if (chartRef.current) {
       const ctx = chartRef.current.getContext('2d');
       if (chartInstance.current) {
         chartInstance.current.destroy();
       }
+
       // Generate labels for x-axis with translation
       const labels = [t('Year 0'), ...termsData.term.map(term => `${t('Yearth', { year: term })} `)];
+
       let datasets = [];
+
       // Configure datasets based on viewMode
       if (viewMode === 'Net Cash') {
         datasets = [
@@ -122,15 +129,18 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
           datasets = datasets.filter(d => [t('Principal'), t('Return')].includes(d.label));
         }
       }
+
       // Apply currency conversion to all dataset values
       datasets = datasets.map(ds => ({
         ...ds,
         data: ds.data.map(value => convertCurrency(value))
       }));
+
       // Calculate the maximum total value across all labels
       const maxTotal = Math.max(...labels.map((_, index) =>
         datasets.reduce((sum, ds) => sum + (ds.data[index] || 0), 0)
       ));
+
       // Add datalabels configuration for inside bar labels
       const updatedDatasets = datasets.map(ds => ({
         ...ds,
@@ -138,7 +148,7 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
           anchor: 'center',
           align: 'center',
           color: 'white',
-          font: { weight: 'bold', size: 15 },//in bar text
+          font: { weight: 'bold', size: 15 }, // In-bar text
           formatter: (value, ctx) => {
             if (displaySwitch) {
               return value ? formatNumber(value) : null;
@@ -148,6 +158,7 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
           }
         }
       }));
+
       // Create annotations for top labels based on viewMode
       const annotations = labels.map((label, index) => {
         if (viewMode === 'Return Detail') {
@@ -250,6 +261,7 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
         }
         return null;
       }).filter(a => a !== null);
+
       // Chart data and options
       const chartData = { labels, datasets: updatedDatasets };
       const options = {
@@ -266,7 +278,7 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
             title: { 
               display: true, 
               text: t('Term Year'), 
-              font: { size: 28 } 
+              font: { size: 20 }  // CHANGED: Increased font size from 28 to 20 for consistency
             },
             ticks: {
               font: { size: 18 },
@@ -277,7 +289,7 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
             title: { 
               display: true, 
               text: currencySwitch ? `${t('Amount')} (HKD)` : `${t('Amount')} (USD)`, 
-              font: { size: 18 } 
+              font: { size: 20 }  // CHANGED: Increased font size from 18 to 20 for consistency
             },
             ticks: {
               font: { size: 15 },
@@ -308,6 +320,7 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
           annotation: { annotations }
         }
       };
+
       chartInstance.current = new Chart(ctx, {
         type: 'bar',
         data: chartData,
@@ -319,23 +332,17 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
         chartInstance.current.destroy();
       }
     };
-  }, [termsData, premiumInput, tableData, viewMode, currencySwitch, i18n.language,displaySwitch]);
-  // Effect to update chart when displaySwitch changes
-  // useEffect(() => {
-  //   if (chartInstance.current) {
-  //     chartInstance.current.update();
-  //   }
-  // }, [displaySwitch]);
+  }, [termsData, premiumInput, tableData, viewMode, currencySwitch, i18n.language, displaySwitch]);
+
   return (
     <Card>
       <CardContent>
         <Grid container spacing={1}>
           <Grid item xs={12} style={{ textAlign: 'end' }}>
             <Select
-              
               value={viewMode}
               onChange={(e) => setViewMode(e.target.value)}
-              input={<InputBase style={{ fontSize: 20, fontWeight: '500' }}/>}
+              input={<InputBase style={{ fontSize: 18, fontWeight: '600' }} />}  // CHANGED: Increased font size from 20 to 22 and made bolder
               IconComponent={ExpandMore}
             >
               <MenuItem value="Return Detail">{t('Return Detail')}</MenuItem>
@@ -343,17 +350,29 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
               <MenuItem value="Net Cash">{t('Net Cash')}</MenuItem>
             </Select>
             <Box display="inline-flex" alignItems="center" ml={2}>
-              <Typography variant="body2" style={{ fontSize: 20, fontWeight: '500' }}>{t('displaySwitch')}</Typography>
+              <Typography variant="body2" style={{ fontSize: 18, fontWeight: '600' }}>{t('displaySwitch')}</Typography>  
               <Switch
-                
                 checked={displaySwitch}
                 onChange={() => setDisplaySwitch(!displaySwitch)}
-                color="primary"
+                sx={{  // CHANGED: Added sx prop to customize switch color to #219a52
+                  '& .MuiSwitch-switchBase.Mui-checked': {
+                    color: '#219a52',  // Thumb color when checked
+                  },
+                  '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                    backgroundColor: '#219a52',  // Track color when checked
+                  },
+                  '& .MuiSwitch-switchBase': {
+                    color: '#ccc',  // Thumb color when unchecked
+                  },
+                  '& .MuiSwitch-track': {
+                    backgroundColor: '#aaa',  // Track color when unchecked
+                  },
+                }}
               />
             </Box>
           </Grid>
           <Grid item xs={12}>
-            <Typography align="center" variant="body1">
+            <Typography align="center" variant="h5" style={{ fontSize: 24, fontWeight: 'bold' }}> 
               {viewMode === 'Net Cash' ? t('Value after Repayment') : t(viewMode)}
             </Typography>
           </Grid>
@@ -365,4 +384,5 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
     </Card>
   );
 };
+
 export default ReturnChart;

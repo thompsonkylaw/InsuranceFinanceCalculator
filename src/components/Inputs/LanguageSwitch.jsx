@@ -33,7 +33,7 @@ function LanguageSwitcher({ onReset, handleVersionSwitch, currentVersion, handle
                 onClick={() => handleVersionSwitch(ver)}
                 sx={{
                   borderRadius: '16px',
-                  minWidth: '120px',
+                  minWidth: 'px',
                   padding: '4px 10px',
                   backgroundColor: currentVersion === ver ? '#219a52' : 'transparent',
                   color: currentVersion === ver ? 'white' : '#219a52',
