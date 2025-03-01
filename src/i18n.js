@@ -55,6 +55,8 @@ i18next
           Ver:'Ver',
           "Insurance Financial Loan Calculator": 'Insurance Financial Loan Calculator',
           disclaimer: 'Disclaimer: The above simplified calculation is for reference only. All information is subject to the terms and conditions of each product. *Annualized return is based only on the initial principal, final net return and terms.',
+          Undo: 'undo',
+          Redo: 'redo',
         }
       },
       "zh-HK": {
@@ -101,7 +103,9 @@ i18next
           displaySwitch:'顯示數值',
           Ver:'版本',
           "Insurance Financial Loan Calculator": '保單融資計算機',
-          disclaimer: '免责声明:以上简化版计算仅供参考用途，一切以各产品条款内容为准 *年化收益仅基于初期本金、最终净回报及年期计算',
+          disclaimer: '免責聲明:以上簡化版計算僅供參考用途，一切以各產品條款內容為准 *年化收益僅基於初期本金、最終淨回報及年期計算',
+          Undo: 'undo',
+          Redo: 'redo',
           
         }
       },
@@ -149,7 +153,9 @@ i18next
           displaySwitch:'显示数值',
           Ver:'版本',
           "Insurance Financial Loan Calculator": '保单融资计算机',
-          disclaimer: '免責聲明:以上簡化版計算僅供參考用途，一切以各產品條款內容為准 *年化收益僅基於初期本金、最終淨回報及年期計算',
+          disclaimer: '免责声明:以上简化版计算仅供参考用途，一切以各产品条款内容为准 *年化收益仅基于初期本金、最终净回报及年期计算',
+          Undo: 'undo',
+          Redo: 'redo',
         }
       }
     }
