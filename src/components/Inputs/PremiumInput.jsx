@@ -160,15 +160,32 @@ const PremiumInput = ({ inputs, setInputs, currencySwitch,saveToUndoStack }) => 
                 label={
                   <Box display="flex" alignItems="center" gap={0.5}>
                     <Button
-                      variant="outlined"
-                      size="small"
-                      
-                      sx={{   fontWeight: 'bold',fontSize: '21px', p: '2px', minWidth: 0, lineHeight: 1, cursor: currencySwitch ? 'not-allowed' : 'pointer' }}
-                      onClick={currencySwitch ? undefined : handleLoanRateToggle}
-                      disabled={currencySwitch}
-                    >
-                      {t('loan')}
-                    </Button>
+  variant="outlined"
+  size="small"
+  sx={{
+    fontWeight: 'bold',
+    fontSize: '21px',
+    p: '2px',
+    minWidth: 0,
+    lineHeight: 1,
+    cursor: currencySwitch ? 'not-allowed' : 'pointer',
+    color: '#219a52', // Text color
+    borderColor: '#219a52', // Border color
+    '&:hover': {
+      borderColor: '#197a43', // Darker shade for hover state
+      backgroundColor: '#e6f4ec', // Light green background on hover
+    },
+    '&.Mui-disabled': {
+      color: '#a0a0a0', // Grey text for disabled state
+      borderColor: '#a0a0a0', // Grey border for disabled state
+    },
+  }}
+  onClick={currencySwitch ? undefined : handleLoanRateToggle}
+  disabled={currencySwitch}
+>
+  {t('loan')}
+</Button>
+
                     <span>({t('Amount')})</span>
                   </Box>
                 }

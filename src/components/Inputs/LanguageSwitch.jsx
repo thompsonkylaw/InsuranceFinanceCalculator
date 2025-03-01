@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Grid, Radio, RadioGroup, FormControlLabel, Button, Card, Box } from '@mui/material';
+import { Grid, Radio, RadioGroup, FormControlLabel, Button, Card, Box, Tooltip } from '@mui/material';
+import UndoIcon from '@mui/icons-material/Undo';
+import RedoIcon from '@mui/icons-material/Redo';
 
 function LanguageSwitcher({ onReset, handleVersionSwitch, currentVersion, handleUndo, undoStack, handleRedo, redoStack }) {
   const { t, i18n } = useTranslation();
@@ -33,7 +35,7 @@ function LanguageSwitcher({ onReset, handleVersionSwitch, currentVersion, handle
                 onClick={() => handleVersionSwitch(ver)}
                 sx={{
                   borderRadius: '16px',
-                  minWidth: 'px',
+                  minWidth: '60px', // Fixed typo from 'px' to '60px'
                   padding: '4px 10px',
                   backgroundColor: currentVersion === ver ? '#219a52' : 'transparent',
                   color: currentVersion === ver ? 'white' : '#219a52',
@@ -43,7 +45,7 @@ function LanguageSwitcher({ onReset, handleVersionSwitch, currentVersion, handle
                   },
                 }}
               >
-                Ver. {ver}
+                {t('Ver')} {ver}
               </Button>
             ))}
           </Box>
@@ -52,7 +54,7 @@ function LanguageSwitcher({ onReset, handleVersionSwitch, currentVersion, handle
         {/* Undo, Redo, and Reset Buttons */}
         <Grid item>
           <Box sx={{ display: 'flex', justifyContent: 'space-evenly' }}>
-          <Button
+            <Button
               variant="contained"
               onClick={onReset}
               sx={{
@@ -63,31 +65,43 @@ function LanguageSwitcher({ onReset, handleVersionSwitch, currentVersion, handle
             >
               {t('Reset Data')}
             </Button>
-            <Button
-              variant="contained"
-              onClick={handleUndo}
-              disabled={undoStack.length === 0}
-              sx={{
-                backgroundColor: '#219a52',
-                color: 'white',
-                '&:hover': { backgroundColor: '#1b7e43' },
-              }}
-            >
-              Undo
-            </Button>
-            <Button
-              variant="contained"
-              onClick={handleRedo}
-              disabled={redoStack.length === 0}
-              sx={{
-                backgroundColor: '#219a52',
-                color: 'white',
-                '&:hover': { backgroundColor: '#1b7e43' },
-              }}
-            >
-              Redo
-            </Button>
-            
+            <Tooltip title={t('Undo')}>
+              <span> {/* Span needed for tooltip to work with disabled button */}
+                <Button
+                  size="20px"
+                  
+                  variant="contained"
+                  onClick={handleUndo}
+                  disabled={undoStack.length === 0}
+                  sx={{
+                    backgroundColor: '#219a52',
+                    color: 'white',
+                    '&:hover': { backgroundColor: '#1b7e43' },
+                  }}
+                  aria-label={t('Undo')}
+                >
+                  <UndoIcon />
+                </Button>
+              </span>
+            </Tooltip>
+            <Tooltip title={t('Redo')}>
+              <span>
+                <Button
+                  size="18px"
+                  variant="contained"
+                  onClick={handleRedo}
+                  disabled={redoStack.length === 0}
+                  sx={{
+                    backgroundColor: '#219a52',
+                    color: 'white',
+                    '&:hover': { backgroundColor: '#1b7e43' },
+                  }}
+                  aria-label={t('Redo')}
+                >
+                  <RedoIcon />
+                </Button>
+              </span>
+            </Tooltip>
           </Box>
         </Grid>
 

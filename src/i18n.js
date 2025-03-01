@@ -2,6 +2,7 @@ import i18next from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
+
 i18next
   .use(LanguageDetector)
   .use(initReactI18next)
@@ -49,8 +50,10 @@ i18next
           "Net Cash": 'Net Cash',
           "Loan Amount": 'Loan Amount',
           "Total Expense": 'Total Expense',
-          "Reset Data": 'Reset Data',
+          "Reset Data": 'Reset',
           displaySwitch:'Show Figure',
+          Ver:'Ver',
+          "Insurance Financial Loan Calculator": 'Insurance Financial Loan Calculator',
         }
       },
       "zh-HK": {
@@ -93,8 +96,11 @@ i18next
           "Net Cash": '還款後價值',
           "Loan Amount": '貸款金額',
           "Total Expense": '總支出',
-          "Reset Data": '還原數據',
+          "Reset Data": '重設',
           displaySwitch:'顯示數值',
+          Ver:'版本',
+          "Insurance Financial Loan Calculator": '保單融資計算機',
+          
         }
       },
       "zh-CN": {
@@ -137,8 +143,10 @@ i18next
           "Net Cash": '还款后价值',
           "Loan Amount": '贷款金额',
           "Total Expense": '总支出',
-          "Reset Data": '还原数据',
+          "Reset Data": '重设',
           displaySwitch:'显示数值',
+          Ver:'版本',
+          "Insurance Financial Loan Calculator": '保单融资计算机',
         }
       }
     }

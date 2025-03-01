@@ -18,6 +18,7 @@ import TermsTable from './components/Inputs/TermsTable';
 import ReturnChart from './components/Inputs/ReturnChart';
 import Currency from './components/Inputs/Currency';
 import LanguageSwitcher from './components/Inputs/LanguageSwitch';
+import { useTranslation } from 'react-i18next';
 
 const theme = createTheme({
   palette: { primary: { main: '#1976d2' }, secondary: { main: '#dc004e' } },
@@ -45,6 +46,7 @@ const loadVersionState = (version) => {
 };
 
 const App = () => {
+  const { t, i18n } = useTranslation();
   const [currentVersion, setCurrentVersion] = useState(1);
   const initialVersionState = loadVersionState(currentVersion);
 
@@ -142,7 +144,7 @@ const App = () => {
               <ArrowBackIcon />
             </IconButton>
             <Typography variant="h6" sx={{ flexGrow: 1 }}>
-              保費融資
+              {t('Insurance Financial Loan Calculator')}
             </Typography>
           </Toolbar>
         </AppBar>
