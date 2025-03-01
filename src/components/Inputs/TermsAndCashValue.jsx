@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, TextField, MenuItem, Card, CardContent, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
-const TermsAndCashValue = ({ inputs, setInputs,currencySwitch }) => {
+const TermsAndCashValue = ({ inputs, setInputs,currencySwitch,saveToUndoStack }) => {
   const { t } = useTranslation();
   // Ensure we have valid arrays (handle undefined/null cases)
   const terms = inputs?.term || [];
@@ -31,6 +31,7 @@ const TermsAndCashValue = ({ inputs, setInputs,currencySwitch }) => {
 
   // Handle term changes with array bounds checking
   const handleTermChange = (index) => (e) => {
+    saveToUndoStack(); //
     const newTerms = [...terms];
     if (index >= 0 && index < newTerms.length) {
       newTerms[index] = parseInt(e.target.value, 10) || 0;
@@ -40,6 +41,7 @@ const TermsAndCashValue = ({ inputs, setInputs,currencySwitch }) => {
 
   // Handle cash value changes with array bounds checking
   const handleCashValueChange = (index) => (e) => {
+    saveToUndoStack(); //
     const newCashValues = [...cashValues];
     if (index >= 0 && index < newCashValues.length) {
       newCashValues[index] = parseCurrency(e.target.value);

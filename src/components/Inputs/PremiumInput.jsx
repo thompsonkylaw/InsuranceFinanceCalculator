@@ -4,7 +4,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import LoanAmountForm from './LoanAmountForm'; // Ensure this path matches your project structure
 import { useTranslation } from 'react-i18next';
 
-const PremiumInput = ({ inputs, setInputs, currencySwitch }) => {
+const PremiumInput = ({ inputs, setInputs, currencySwitch,saveToUndoStack }) => {
   const loanRateInputRef = useRef(null); // Rename for clarity
   const { t } = useTranslation();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -26,6 +26,7 @@ const PremiumInput = ({ inputs, setInputs, currencySwitch }) => {
   const parseCurrency = (value) => parseInt(value.replace(/\D/g, ''), 10) || 0;
 
   const handleDirectEdit = (field) => (e) => {
+    saveToUndoStack(); // Save state before update
     const numericValue = parseCurrency(e.target.value);
     const newInputs = { ...inputs, [field]: numericValue };
 
@@ -50,6 +51,7 @@ const PremiumInput = ({ inputs, setInputs, currencySwitch }) => {
   };
 
   const handleLoanRateToggle = () => {
+    saveToUndoStack(); // Save state before update
     if (isLoanRateZero) {
       const newLoanAmount = Math.round((inputs.premium * savedLoanRate) / 100);
       const newPrincipal = inputs.premium - newLoanAmount - inputs.firstYearBonus;
@@ -74,6 +76,7 @@ const PremiumInput = ({ inputs, setInputs, currencySwitch }) => {
   };
 
   const handleLoanAmountUpdate = ({ loanAmount, cashValue, loanRatio }) => {
+    saveToUndoStack(); // Save state before update
     setInputs((prev) => {
       const preciseLoanAmount = Math.round(loanAmount);
       const newLoanRate = prev.premium ? (preciseLoanAmount / prev.premium) * 100 : 0;

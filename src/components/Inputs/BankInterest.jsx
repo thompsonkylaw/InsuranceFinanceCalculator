@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-const BankInterest = ({ inputs, setInputs, loanAmount, currencySwitch }) => {
+const BankInterest = ({ inputs, setInputs, loanAmount, currencySwitch,saveToUndoStack }) => {
   const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
   const [sliderValue, setSliderValue] = useState(inputs.loanInterest); // Local state for slider
@@ -31,6 +31,7 @@ const BankInterest = ({ inputs, setInputs, loanAmount, currencySwitch }) => {
 
   // Handle input field changes
   const handleInputChange = (e) => {
+    saveToUndoStack();
     const rawValue = e.target.value.replace(/[^0-9.]/g, ""); // Allow only digits and decimal point
     const numericValue = rawValue ? parseFloat(rawValue) : 0;
     const clampedValue = Math.min(Math.max(numericValue, 0.125), 10); // Clamp between 0.125 and 10
@@ -42,11 +43,13 @@ const BankInterest = ({ inputs, setInputs, loanAmount, currencySwitch }) => {
 
   // Handle slider movement (updates local state during drag)
   const handleSliderChange = (event, newValue) => {
+    //saveToUndoStack();
     setSliderValue(newValue);
   };
 
   // Handle slider release (updates parent state)
   const handleSliderChangeCommitted = (event, newValue) => {
+    saveToUndoStack();
     setInputs((prev) => ({
       ...prev,
       loanInterest: newValue,
