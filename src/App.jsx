@@ -205,8 +205,8 @@ const App = () => {
               </Grid>
               <Grid item>
                 <p>
-                  免責聲明:以上簡化版計算僅供參考用途，一切以各產品條款內容為准 *年化收益
-                  僅基於初期本金、最終淨回報及年期計算
+                  {t('disclaimer')}
+                  
                 </p>
               </Grid>
               {/* LanguageSwitcher for mobile view */}
