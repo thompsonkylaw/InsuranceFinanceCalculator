@@ -138,7 +138,7 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       {/* <Box sx={{ p: { xs: 1, md: 0 }, minHeight: '100vh', backgroundColor: 'background.default' }}> */}
-        <AppBar position="static" sx={{ backgroundColor: '#219a52' }}>
+        <AppBar className = "app-bar" position="static" sx={{ backgroundColor: '#219a52' }}>
           <Toolbar>
             <IconButton edge="start" color="inherit" aria-label="back">
               <ArrowBackIcon />
