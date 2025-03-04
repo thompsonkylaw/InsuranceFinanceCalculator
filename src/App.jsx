@@ -137,7 +137,7 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box sx={{ p: { xs: 1, md: 0 }, minHeight: '100vh', backgroundColor: 'background.default' }}>
+      {/* <Box sx={{ p: { xs: 1, md: 0 }, minHeight: '100vh', backgroundColor: 'background.default' }}> */}
         <AppBar position="static" sx={{ backgroundColor: '#219a52' }}>
           <Toolbar>
             <IconButton edge="start" color="inherit" aria-label="back">
@@ -148,6 +148,11 @@ const App = () => {
             </Typography>
           </Toolbar>
         </AppBar>
+        <div className="main-app">
+          <style>{`
+            .main-app { max-width: 1600px; margin: 0 auto; padding: 10px; font-family: 'Segoe UI', sans-serif; }
+           
+          `}</style>  
         <Grid container spacing={{ xs: 3, md: 2 }}>
           {/* Main Content Column */}
           <Grid item xs={12} sm={8} md={9}>
@@ -264,7 +269,8 @@ const App = () => {
             </Grid>
           </Grid>
         </Grid>
-      </Box>
+        </div>
+      {/* </Box> */}
     </ThemeProvider>
   );
 };
