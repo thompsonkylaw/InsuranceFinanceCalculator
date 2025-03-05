@@ -17,7 +17,7 @@ i18next
           Yearth: 'Year {{year}}',
           premium: 'Premium',
           loan: 'LOAN %',
-          First_Year_Bonus: '1st year bonus input',
+          First_Year_Bonus: '1st year bonus (Ratio%)',
           Principal: 'Principal',
           Display_Currency: 'Display Currency',
           Loan_Ratio_Calculator: 'Loan Ratio Calculator',
@@ -57,6 +57,8 @@ i18next
           disclaimer: 'Disclaimer: The above simplified calculation is for reference only. All information is subject to the terms and conditions of each product. *Annualized return is based only on the initial principal, final net return and terms.',
           Undo: 'undo',
           Redo: 'redo',
+          First_Year_Bonus_Rate: 'First Year Bonus Ratio',
+          Bonus_Rate: 'Bonus Ratio',
         }
       },
       "zh-HK": {
@@ -66,7 +68,7 @@ i18next
           Yearth: '第{{year}}年',
           premium: '保費總額',
           loan: '貸款比率',
-          First_Year_Bonus: '首年優惠',
+          First_Year_Bonus: '首年優惠 (比率%)',
           Principal: '本金',
           Display_Currency: '顯示貨幣',
           Loan_Ratio_Calculator: '貸款比率計算器',
@@ -106,6 +108,9 @@ i18next
           disclaimer: '免責聲明:以上簡化版計算僅供參考用途，一切以各產品條款內容為准 *年化收益僅基於初期本金、最終淨回報及年期計算',
           Undo: 'undo',
           Redo: 'redo',
+          First_Year_Bonus_Rate: '首年優惠比率',
+          Bonus_Rate: '優惠比率',
+          
           
         }
       },
@@ -116,7 +121,7 @@ i18next
           Yearth: '第{{year}}年',
           premium: '保费总额',
           loan: '贷款比率',
-          First_Year_Bonus: '首年优惠',
+          First_Year_Bonus: '首年优惠 (比率%)',
           Principal: '本金',
           Display_Currency: '显示货币',
           Loan_Ratio_Calculator: '贷款比率计算器',
@@ -156,6 +161,8 @@ i18next
           disclaimer: '免责声明:以上简化版计算仅供参考用途，一切以各产品条款内容为准 *年化收益仅基于初期本金、最终净回报及年期计算',
           Undo: 'undo',
           Redo: 'redo',
+          First_Year_Bonus_Rate: '首年优惠比率',
+          Bonus_Rate: '优惠比率',
         }
       }
     }

@@ -26,7 +26,7 @@ const theme = createTheme({
 });
 
 const initialState = {
-  premiumInput: { premium: 2400000, loanRate: 72, loanAmount: 1728000, firstYearBonus: 120000, principal: 552000, firstDateCashValue: 1920000, bankLoanRatio: 90 },
+  premiumInput: { premium: 2400000, loanRate: 72, loanAmount: 1728000, firstYearBonus: 120000, principal: 552000, firstDateCashValue: 1920000, bankLoanRatio: 90, firstYearBonusRate: 10 },
   bankInterestInput: { loanInterest: 4, monthlyInterestPayment: 0 },
   termsAndCashValue: { term: [5, 10, 15], cashValue: [2654933, 3672432, 5077716] },
   tableData: {

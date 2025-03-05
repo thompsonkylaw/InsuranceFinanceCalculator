@@ -1,7 +1,5 @@
-// Currency.jsx
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-
 import {
   Grid,
   Card,
@@ -11,20 +9,21 @@ import {
   IconButton
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import LockIcon from '@mui/icons-material/Lock'; // Added LockIcon import
 
 const Currency = ({ switch: isHkd, setInputs }) => {
   const { t } = useTranslation();  
   const handleChange = (event) => {
-    // console.log('event.target.checked',event.target.checked);
-    // Update parent state with new switch value
     setInputs(event.target.checked);
   };
 
+  // Conditionally set the background color
+  const backgroundColor = isHkd ?  '#FFFBF5' : '#FFFBF5';
+
   return (
     <Grid item xs={12}>
-      
       <Card sx={{ p: 1, borderRadius: 3, boxShadow: 3, mt: 2 }}>
-        <div style={{ paddingTop: 0, paddingLeft:25, background: '#FFFBF5' }}>
+        <div style={{ paddingTop: 0, paddingLeft: 25, background: backgroundColor,borderRadius: 30, color: 'Red' }}>
           <Grid container direction="column">
             <Grid item>
               <Grid container alignItems="center" justifyContent="space-between" spacing={1}>
@@ -35,37 +34,40 @@ const Currency = ({ switch: isHkd, setInputs }) => {
                         checked={isHkd}
                         onChange={handleChange}
                         name="isCurrencyEnabled"
-                        color="#219a52"
+                        sx={{  // Custom styles for switch
+                          '& .MuiSwitch-switchBase.Mui-checked': {
+                            color: '#219a52',  // Thumb color when checked
+                          },
+                          '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                            backgroundColor: '#219a52',  // Track color when checked
+                          },
+                          '& .MuiSwitch-switchBase': {
+                            color: '#ccc',  // Thumb color when unchecked
+                          },
+                          '& .MuiSwitch-track': {
+                            backgroundColor: '#aaa',  // Track color when unchecked
+                          },
+                        }}
                       />
                     }
                     label={
                       <Grid container alignItems="center" spacing={1} style={{ lineHeight: 1 }}>
-                        {/* <Grid item>
-                          <div style={{
-                            border: '1px solid #FFC000',
-                            color: '#FFC000',
-                            padding: 1,
-                            borderRadius: 3,
-                            fontSize: 12
-                          }}>
-                            COT
-                          </div>
-                        </Grid> */}
                         <Grid item>
-                          <Typography variant="body1" color="textSecondary" style={{ fontSize: 18,  fontWeight: 'bold', }}>
+                          <Typography variant="body1" color="textSecondary" style={{ fontSize: 18, fontWeight: 'bold' }}>
                             {t('Display_Currency')}: {isHkd ? 'HKD' : 'USD'}
                           </Typography>
                         </Grid>
+                        {/* Add lock icon when HKD is selected */}
+                        {isHkd && (
+                          <Grid item>
+                            <LockIcon fontSize="small" />
+                          </Grid>
+                        )}
                       </Grid>
                     }
                     style={{ marginBottom: 0 }}
                   />
                 </Grid>
-                {/* <Grid item>
-                  <IconButton size="small">
-                    <EditIcon fontSize="small" />
-                  </IconButton>
-                </Grid> */}
               </Grid>
             </Grid>
           </Grid>

@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-const BankInterest = ({ inputs, setInputs, loanAmount, currencySwitch,saveToUndoStack }) => {
+const BankInterest = ({ inputs, setInputs, loanAmount, currencySwitch, saveToUndoStack }) => {
   const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
   const [sliderValue, setSliderValue] = useState(inputs.loanInterest); // Local state for slider
@@ -29,21 +29,8 @@ const BankInterest = ({ inputs, setInputs, loanAmount, currencySwitch,saveToUndo
     }));
   }, [loanAmount, inputs.loanInterest, setInputs]);
 
-  // Handle input field changes
-  const handleInputChange = (e) => {
-    saveToUndoStack();
-    const rawValue = e.target.value.replace(/[^0-9.]/g, ""); // Allow only digits and decimal point
-    const numericValue = rawValue ? parseFloat(rawValue) : 0;
-    const clampedValue = Math.min(Math.max(numericValue, 0.125), 10); // Clamp between 0.125 and 10
-    setInputs((prev) => ({
-      ...prev,
-      loanInterest: clampedValue,
-    }));
-  };
-
   // Handle slider movement (updates local state during drag)
   const handleSliderChange = (event, newValue) => {
-    //saveToUndoStack();
     setSliderValue(newValue);
   };
 
@@ -68,23 +55,23 @@ const BankInterest = ({ inputs, setInputs, loanAmount, currencySwitch,saveToUndo
           <Grid item>
             <input
               type="text"
-              value={inputs.loanInterest} // Directly tied to parent state
-              onChange={handleInputChange}
-              disabled={currencySwitch}
+              value={inputs.loanInterest} // Controlled by parent state
+              readOnly={true} // Prevents direct user input
+              disabled={currencySwitch} // Disables input when currencySwitch is true
               style={{
                 width: "60px",
                 border: "none",
                 background: "transparent",
                 fontSize: "1rem",
                 fontWeight: "bold",
-                color: currencySwitch ? "#999" : "#219a52",
+                color: currencySwitch ? "#999" : "#000", // Black when enabled, gray when disabled
                 textAlign: "right",
-                cursor: currencySwitch ? "not-allowed" : "auto",
+                cursor: currencySwitch ? "not-allowed" : "default", // Cursor indicates non-editable state
               }}
             />
           </Grid>
           <Grid item>
-          <Typography variant="subtitle1" fontWeight="bold">
+            <Typography variant="subtitle1" fontWeight="bold">
               %
             </Typography>
           </Grid>
@@ -115,7 +102,6 @@ const BankInterest = ({ inputs, setInputs, loanAmount, currencySwitch,saveToUndo
           onChangeCommitted={handleSliderChangeCommitted} // Updates parent state on release
           disabled={currencySwitch}
           step={0.125}
-          
           min={0}
           max={10}
           valueLabelDisplay="auto"
