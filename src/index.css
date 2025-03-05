@@ -144,3 +144,10 @@ body {
     max-width: 100%; /* Ensures no overflow */
   }
 }
+
+/* Division */
+body > div:nth-child(1){
+  background-color:#ffffff;
+ }
+ 
+ 
