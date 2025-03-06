@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-const BankInterest = ({ inputs, setInputs, loanAmount, currencySwitch, saveToUndoStack }) => {
+const BankInterest = ({ inputs, setInputs, loanAmount, currencySwitch, saveToUndoStack, appBarColor }) => {
   const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
   const [sliderValue, setSliderValue] = useState(inputs.loanInterest); // Local state for slider
@@ -109,10 +109,10 @@ const BankInterest = ({ inputs, setInputs, loanAmount, currencySwitch, saveToUnd
             "& .MuiSlider-thumb": {
               borderRadius: "50%",
               border: currencySwitch ? "2px solid #999" : "2px solid blue",
-              bgcolor: currencySwitch ? "#fff" : "#219a52",
+              bgcolor: currencySwitch ? "#fff" : appBarColor,
             },
             "& .MuiSlider-track": {
-              bgcolor: currencySwitch ? "#999" : "#219a52",
+              bgcolor: currencySwitch ? "#999" : appBarColor,
             },
             "& .MuiSlider-rail": {
               bgcolor: "#d3d3d3",

@@ -1,14 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Grid, Radio, RadioGroup, FormControlLabel, Button, Card, Box, Tooltip } from '@mui/material';
+import { Grid, Radio, RadioGroup, FormControlLabel, Button, Card, Box, Tooltip, Dialog } from '@mui/material';
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
+import Setting from './Setting'; // Import the new Setting component
 
-function LanguageSwitcher({ onReset, handleVersionSwitch, currentVersion, handleUndo, undoStack, handleRedo, redoStack }) {
+function LanguageSwitcher({
+  onReset,
+  handleVersionSwitch,
+  currentVersion,
+  handleUndo,
+  undoStack,
+  handleRedo,
+  redoStack,
+  setAppBarColor,
+  appBarColor, // Add setAppBarColor prop
+}) {
   const { t, i18n } = useTranslation();
-  const [selectedLanguage, setSelectedLanguage] = useState(i18n.language || 'en'); // Default to 'en'
+  const [selectedLanguage, setSelectedLanguage] = useState(i18n.language || 'en');
+  const [settingsOpen, setSettingsOpen] = useState(false); // State for dialog
 
-  // Ensure a language is always selected
   useEffect(() => {
     if (!selectedLanguage) {
       setSelectedLanguage('en');
@@ -21,6 +32,9 @@ function LanguageSwitcher({ onReset, handleVersionSwitch, currentVersion, handle
     setSelectedLanguage(newLanguage);
     i18n.changeLanguage(newLanguage);
   };
+
+  const handleOpenSettings = () => setSettingsOpen(true);
+  const handleCloseSettings = () => setSettingsOpen(false);
 
   return (
     <Card sx={{ p: 2, borderRadius: 3, boxShadow: 3, mt: 2 }}>
@@ -35,11 +49,11 @@ function LanguageSwitcher({ onReset, handleVersionSwitch, currentVersion, handle
                 onClick={() => handleVersionSwitch(ver)}
                 sx={{
                   borderRadius: '16px',
-                  minWidth: '60px', // Fixed typo from 'px' to '60px'
+                  minWidth: '60px',
                   padding: '4px 10px',
-                  backgroundColor: currentVersion === ver ? '#219a52' : 'transparent',
-                  color: currentVersion === ver ? 'white' : '#219a52',
-                  borderColor: '#219a52',
+                  backgroundColor: currentVersion === ver ? appBarColor : 'transparent',
+                  color: currentVersion === ver ? 'white' : appBarColor,
+                  borderColor: appBarColor,
                   '&:hover': {
                     backgroundColor: currentVersion === ver ? '#1b7e43' : '#e0f2e9',
                   },
@@ -58,7 +72,7 @@ function LanguageSwitcher({ onReset, handleVersionSwitch, currentVersion, handle
               variant="contained"
               onClick={onReset}
               sx={{
-                backgroundColor: '#219a52',
+                backgroundColor: appBarColor,
                 color: 'white',
                 '&:hover': { backgroundColor: '#1b7e43' },
               }}
@@ -66,15 +80,13 @@ function LanguageSwitcher({ onReset, handleVersionSwitch, currentVersion, handle
               {t('Reset Data')}
             </Button>
             <Tooltip title={t('Undo')}>
-              <span> {/* Span needed for tooltip to work with disabled button */}
+              <span>
                 <Button
-                  size="20px"
-                  
                   variant="contained"
                   onClick={handleUndo}
                   disabled={undoStack.length === 0}
                   sx={{
-                    backgroundColor: '#219a52',
+                    backgroundColor: appBarColor,
                     color: 'white',
                     '&:hover': { backgroundColor: '#1b7e43' },
                   }}
@@ -87,12 +99,11 @@ function LanguageSwitcher({ onReset, handleVersionSwitch, currentVersion, handle
             <Tooltip title={t('Redo')}>
               <span>
                 <Button
-                  size="18px"
                   variant="contained"
                   onClick={handleRedo}
                   disabled={redoStack.length === 0}
                   sx={{
-                    backgroundColor: '#219a52',
+                    backgroundColor: appBarColor,
                     color: 'white',
                     '&:hover': { backgroundColor: '#1b7e43' },
                   }}
@@ -118,23 +129,35 @@ function LanguageSwitcher({ onReset, handleVersionSwitch, currentVersion, handle
             >
               <FormControlLabel
                 value="en"
-                control={<Radio sx={{ color: '#219a52', '&.Mui-checked': { color: '#219a52' } }} />}
+                control={<Radio sx={{ color: appBarColor, '&.Mui-checked': { color: appBarColor } }} />}
                 label="English"
               />
               <FormControlLabel
                 value="zh-HK"
-                control={<Radio sx={{ color: '#219a52', '&.Mui-checked': { color: '#219a52' } }} />}
+                control={<Radio sx={{ color: appBarColor, '&.Mui-checked': { color: appBarColor } }} />}
                 label="繁體中文"
               />
               <FormControlLabel
                 value="zh-CN"
-                control={<Radio sx={{ color: '#219a52', '&.Mui-checked': { color: '#219a52' } }} />}
+                control={<Radio sx={{ color: appBarColor, '&.Mui-checked': { color: appBarColor } }} />}
                 label="简體中文"
               />
             </RadioGroup>
           </Box>
         </Grid>
+
+        {/* Settings Button */}
+        <Grid item>
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Button onClick={handleOpenSettings}>{t('Settings')}</Button>
+          </Box>
+        </Grid>
       </Grid>
+
+      {/* Settings Dialog */}
+      <Dialog open={settingsOpen} onClose={handleCloseSettings}>
+        <Setting setAppBarColor={setAppBarColor} onClose={handleCloseSettings} />
+      </Dialog>
     </Card>
   );
 }

@@ -11,7 +11,7 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 import LockIcon from '@mui/icons-material/Lock'; // Added LockIcon import
 
-const Currency = ({ switch: isHkd, setInputs }) => {
+const Currency = ({ switch: isHkd, setInputs,appBarColor }) => {
   const { t } = useTranslation();  
   const handleChange = (event) => {
     setInputs(event.target.checked);
@@ -36,10 +36,10 @@ const Currency = ({ switch: isHkd, setInputs }) => {
                         name="isCurrencyEnabled"
                         sx={{  // Custom styles for switch
                           '& .MuiSwitch-switchBase.Mui-checked': {
-                            color: '#219a52',  // Thumb color when checked
+                            color: appBarColor,  // Thumb color when checked
                           },
                           '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                            backgroundColor: '#219a52',  // Track color when checked
+                            backgroundColor: appBarColor,  // Track color when checked
                           },
                           '& .MuiSwitch-switchBase': {
                             color: '#ccc',  // Thumb color when unchecked

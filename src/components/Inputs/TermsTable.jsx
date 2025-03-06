@@ -12,11 +12,12 @@ import {
   IconButton,
   Grid,
   Typography,
-  Collapse
+  Collapse,
+ 
 } from '@mui/material';
 import { ExpandMore, ExpandLess } from '@mui/icons-material';
 
-const TermsTable = ({ termsAndCashValue, premiumInput, bankInterest, tableData, setInputs, currencySwitch }) => {
+const TermsTable = ({ termsAndCashValue, premiumInput, bankInterest, tableData, setInputs, currencySwitch, appBarColor }) => {
   const { t, i18n } = useTranslation(); // Include i18n to access current language
   const currentLanguage = i18n.language; // Correctly retrieve the current language
   const [expandedRow, setExpandedRow] = useState(null);

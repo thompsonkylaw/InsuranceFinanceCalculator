@@ -58,6 +58,14 @@ const App = () => {
   const [undoStack, setUndoStack] = useState(initialVersionState.undoStack);
   const [redoStack, setRedoStack] = useState(initialVersionState.redoStack);
 
+  // Add appBarColor state, initialized from localStorage or default to 'green'
+  const [appBarColor, setAppBarColor] = useState(localStorage.getItem('appBarColor') || 'green');
+
+  // Save appBarColor to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('appBarColor', appBarColor);
+  }, [appBarColor]);
+
   useEffect(() => {
     if (!currentVersion) {
       setCurrentVersion(1);
@@ -137,22 +145,20 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      {/* <Box sx={{ p: { xs: 1, md: 0 }, minHeight: '100vh', backgroundColor: 'background.default' }}> */}
-        <AppBar className = "app-bar" position="static" sx={{ backgroundColor: '#219a52' }}>
-          <Toolbar>
-            <IconButton edge="start" color="inherit" aria-label="back">
-              <ArrowBackIcon />
-            </IconButton>
-            <Typography variant="h6" sx={{ flexGrow: 1 }}>
-              {t('Insurance Financial Loan Calculator')}
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <div className="main-app">
-          <style>{`
-            .main-app { max-width: 1600px; margin: 0 auto; padding: 10px; font-family: 'Segoe UI', sans-serif; }
-           
-          `}</style>  
+      <AppBar position="static" sx={{ backgroundColor: appBarColor }}>
+        <Toolbar>
+          <IconButton edge="start" color="inherit" aria-label="back">
+            <ArrowBackIcon />
+          </IconButton>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            {t('Insurance Financial Loan Calculator')}
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <div className="main-app">
+        <style>{`
+          .main-app { max-width: 1600px; margin: 0 auto; padding: 10px; font-family: 'Segoe UI', sans-serif; }
+        `}</style>
         <Grid container spacing={{ xs: 3, md: 2 }}>
           {/* Main Content Column */}
           <Grid item xs={12} sm={8} md={9}>
@@ -163,14 +169,15 @@ const App = () => {
                   setInputs={setPremiumInput}
                   saveToUndoStack={saveToUndoStack}
                   currencySwitch={currencySwitch}
+                  appBarColor = {appBarColor}// Pass setAppBarColor
                 />
               </Grid>
-              {/* Side components for mobile view only */}
               <Grid item sx={{ display: { xs: 'block', sm: 'none' } }}>
                 <Currency
                   switch={currencySwitch}
                   setInputs={setCurrencySwitch}
                   saveToUndoStack={saveToUndoStack}
+                  appBarColor = {appBarColor}// Pass setAppBarColor
                 />
               </Grid>
               <Grid item sx={{ display: { xs: 'block', sm: 'none' } }}>
@@ -180,6 +187,7 @@ const App = () => {
                   saveToUndoStack={saveToUndoStack}
                   loanAmount={premiumInput.loanAmount || 0}
                   currencySwitch={currencySwitch}
+                  appBarColor = {appBarColor}// Pass setAppBarColor
                 />
               </Grid>
               <Grid item sx={{ display: { xs: 'block', sm: 'none' } }}>
@@ -196,6 +204,7 @@ const App = () => {
                   termsData={termsAndCashValue}
                   tableData={tableData}
                   currencySwitch={currencySwitch}
+                  appBarColor = {appBarColor}// Pass setAppBarColor
                 />
               </Grid>
               <Grid item>
@@ -206,15 +215,12 @@ const App = () => {
                   tableData={tableData}
                   setInputs={setTableData}
                   currencySwitch={currencySwitch}
+                  appBarColor = {appBarColor}// Pass setAppBarColor
                 />
               </Grid>
               <Grid item>
-                <p>
-                  {t('disclaimer')}
-                  
-                </p>
+                <p>{t('disclaimer')}</p>
               </Grid>
-              {/* LanguageSwitcher for mobile view */}
               <Grid item sx={{ display: { xs: 'block', sm: 'none' } }}>
                 <LanguageSwitcher
                   onReset={resetAllInputs}
@@ -224,6 +230,8 @@ const App = () => {
                   undoStack={undoStack}
                   handleRedo={handleRedo}
                   redoStack={redoStack}
+                  setAppBarColor={setAppBarColor} // Pass setAppBarColor
+                  appBarColor = {appBarColor}// Pass setAppBarColor
                 />
               </Grid>
             </Grid>
@@ -236,6 +244,7 @@ const App = () => {
                   switch={currencySwitch}
                   setInputs={setCurrencySwitch}
                   saveToUndoStack={saveToUndoStack}
+                  appBarColor = {appBarColor}// Pass setAppBarColor
                 />
               </Grid>
               <Grid item>
@@ -245,6 +254,7 @@ const App = () => {
                   saveToUndoStack={saveToUndoStack}
                   loanAmount={premiumInput.loanAmount || 0}
                   currencySwitch={currencySwitch}
+                  appBarColor = {appBarColor}// Pass setAppBarColor
                 />
               </Grid>
               <Grid item>
@@ -253,6 +263,7 @@ const App = () => {
                   setInputs={setTermsAndCashValue}
                   saveToUndoStack={saveToUndoStack}
                   currencySwitch={currencySwitch}
+                  appBarColor = {appBarColor}// Pass setAppBarColor
                 />
               </Grid>
               <Grid item>
@@ -264,13 +275,14 @@ const App = () => {
                   undoStack={undoStack}
                   handleRedo={handleRedo}
                   redoStack={redoStack}
+                  setAppBarColor={setAppBarColor} 
+                  appBarColor = {appBarColor}// Pass setAppBarColor
                 />
               </Grid>
             </Grid>
           </Grid>
         </Grid>
-        </div>
-      {/* </Box> */}
+      </div>
     </ThemeProvider>
   );
 };

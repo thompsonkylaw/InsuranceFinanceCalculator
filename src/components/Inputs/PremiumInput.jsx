@@ -5,7 +5,7 @@ import LoanAmountForm from './LoanAmountForm';
 import FirstYearBonusRateForm from './FirstYearBonusRateForm';
 import { useTranslation } from 'react-i18next';
 
-const PremiumInput = ({ inputs, setInputs, currencySwitch, saveToUndoStack }) => {
+const PremiumInput = ({ inputs, setInputs, currencySwitch, saveToUndoStack,appBarColor }) => {
   const loanRateInputRef = useRef(null);
   const { t } = useTranslation();
   const [loanDialogOpen, setLoanDialogOpen] = useState(false);
@@ -224,8 +224,8 @@ const PremiumInput = ({ inputs, setInputs, currencySwitch, saveToUndoStack }) =>
                         minWidth: 0,
                         lineHeight: 1,
                         cursor: currencySwitch ? 'not-allowed' : 'pointer',
-                        color: '#219a52',
-                        borderColor: '#219a52',
+                        color: appBarColor,
+                        borderColor: appBarColor,
                         '&:hover': {
                           borderColor: '#197a43',
                           backgroundColor: '#e6f4ec',

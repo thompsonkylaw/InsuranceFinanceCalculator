@@ -18,7 +18,7 @@ import annotationPlugin from 'chartjs-plugin-annotation';
 // Register Chart.js plugins
 Chart.register(ChartDataLabels, annotationPlugin);
 
-const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => {
+const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch,appBarColor }) => {
   const { t, i18n } = useTranslation();
   const [viewMode, setViewMode] = useState('Return Detail');
   const [displaySwitch, setDisplaySwitch] = useState(true); // State for toggling display
@@ -356,10 +356,10 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch }) => 
                 onChange={() => setDisplaySwitch(!displaySwitch)}
                 sx={{  // CHANGED: Added sx prop to customize switch color to #219a52
                   '& .MuiSwitch-switchBase.Mui-checked': {
-                    color: '#219a52',  // Thumb color when checked
+                    color: appBarColor,  // Thumb color when checked
                   },
                   '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                    backgroundColor: '#219a52',  // Track color when checked
+                    backgroundColor: appBarColor,  // Track color when checked
                   },
                   '& .MuiSwitch-switchBase': {
                     color: '#ccc',  // Thumb color when unchecked
