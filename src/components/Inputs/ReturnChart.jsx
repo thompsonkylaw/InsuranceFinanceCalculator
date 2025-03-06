@@ -27,13 +27,14 @@ const ReturnChart = ({ termsData, premiumInput, tableData, currencySwitch,appBar
 
   // Define colors for each dataset
   const colors = {
-    Principal: 'rgb(57, 102, 248)',
-    LoanAmount: 'rgb(255, 165, 0)',
-    TotalExpense: 'rgb(255, 192, 0)',
-    Return: 'rgb(15, 175, 63)',
-    NetCash: 'rgb(62, 199, 248)'
+    Principal: 'rgb(38, 70, 83)',
+    LoanAmount: 'rgb(231, 111, 81)',
+    TotalExpense: 'rgb(244, 162, 97)',
+    Return: 'rgb(42, 157, 143)',
+    NetCash: 'rgb(233, 196, 106)'
   };
-
+  
+  
   // Convert currency based on currencySwitch (USD to HKD if true)
   const convertCurrency = (value) => {
     return currencySwitch ? value * 7.8 : value;

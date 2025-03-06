@@ -3,19 +3,21 @@ import { Box, Card, CardContent, TextField, Button, IconButton, InputAdornment }
 import EditIcon from '@mui/icons-material/Edit';
 import LoanAmountForm from './LoanAmountForm';
 import FirstYearBonusRateForm from './FirstYearBonusRateForm';
+import PrincipalInputForm from './PrincipalInputForm'; // Import the new component
 import { useTranslation } from 'react-i18next';
 
-const PremiumInput = ({ inputs, setInputs, currencySwitch, saveToUndoStack,appBarColor }) => {
+const PremiumInput = ({ inputs, setInputs, currencySwitch, saveToUndoStack, appBarColor }) => {
   const loanRateInputRef = useRef(null);
   const { t } = useTranslation();
   const [loanDialogOpen, setLoanDialogOpen] = useState(false);
   const [bonusDialogOpen, setBonusDialogOpen] = useState(false);
+  const [principalDialogOpen, setPrincipalDialogOpen] = useState(false); // New state for Principal dialog
   const [savedLoanRate, setSavedLoanRate] = useState(inputs.loanRate);
   const [isLoanRateZero, setIsLoanRateZero] = useState(false);
 
   // Calculate derived values based on current state
   const loanAmount = Math.round((inputs.premium * inputs.loanRate) / 100);
-  const firstYearBonusRate = inputs.premium ? ((inputs.firstYearBonus / inputs.premium) * 100).toFixed(0) : 0;
+  const firstYearBonusRate = inputs.premium > 0 ? ((inputs.firstYearBonus / inputs.premium) * 100).toFixed(0) : 0;
 
   // Format currency based on currencySwitch (USD or HKD)
   const formatCurrency = (value) => {
@@ -35,46 +37,14 @@ const PremiumInput = ({ inputs, setInputs, currencySwitch, saveToUndoStack,appBa
     saveToUndoStack();
     const numericValue = parseCurrency(e.target.value);
     const newInputs = { ...inputs };
-  
-    if (field === 'principal') {
-      const newPrincipal = numericValue;
-      // Calculate current rates based on existing state
-      const currentLoanRate = inputs.loanRate;
-      const currentBonusRate = inputs.premium ? (inputs.firstYearBonus / inputs.premium) * 100 : 0;
-      const denominator = 1 - (currentLoanRate / 100) - (currentBonusRate / 100);
-  
-      // Calculate new premium, ensuring denominator is not zero
-      const newPremium = denominator !== 0 ? Math.round(newPrincipal / denominator) : inputs.premium;
-  
-      // Update premium
-      newInputs.premium = newPremium;
-  
-      // Update firstYearBonus based on new premium and current bonus rate
-      newInputs.firstYearBonus = Math.round((newPremium * currentBonusRate) / 100);
-  
-      // Update principal to the new value
-      newInputs.principal = newPrincipal;
-  
-      // Optionally, update loanAmount if needed (based on new premium and current loan rate)
-      newInputs.loanAmount = Math.round((newPremium * currentLoanRate) / 100);
-    } else if (field === 'premium') {
-      // Step 1: Calculate the current firstYearBonusRate using the existing inputs
-  const currentFirstYearBonusRate = inputs.premium > 0 ? (inputs.firstYearBonus / inputs.premium) * 100 : 0;
 
-  // Step 2: Set the new Premium value from user input
-  newInputs.premium = numericValue;
-
-  // Step 3: Recalculate firstYearBonus to maintain the same rate
-  newInputs.firstYearBonus = Math.round((numericValue * currentFirstYearBonusRate) / 100);
-
-  // Step 4: Calculate the new loanAmount based on the updated Premium and existing loanRate
-  const newLoanAmount = Math.round((numericValue * newInputs.loanRate) / 100);
-
-  // Step 5: Calculate principal as Premium - loanAmount - firstYearBonus
-  newInputs.principal = numericValue - newLoanAmount - newInputs.firstYearBonus;
-
-  // Step 6: Update loanAmount in the inputs
-  newInputs.loanAmount = newLoanAmount;
+    if (field === 'premium') {
+      const currentFirstYearBonusRate = inputs.premium > 0 ? (inputs.firstYearBonus / inputs.premium) * 100 : 0;
+      newInputs.premium = numericValue;
+      newInputs.firstYearBonus = Math.round((numericValue * currentFirstYearBonusRate) / 100);
+      const newLoanAmount = Math.round((numericValue * newInputs.loanRate) / 100);
+      newInputs.principal = numericValue - newLoanAmount - newInputs.firstYearBonus;
+      newInputs.loanAmount = newLoanAmount;
     } else if (field === 'loanRate') {
       newInputs.loanRate = numericValue;
       const newLoanAmount = Math.round((newInputs.premium * numericValue) / 100);
@@ -85,8 +55,28 @@ const PremiumInput = ({ inputs, setInputs, currencySwitch, saveToUndoStack,appBa
       const newLoanAmount = Math.round((newInputs.premium * newInputs.loanRate) / 100);
       newInputs.principal = newInputs.premium - newLoanAmount - numericValue;
     }
-  
+
     setInputs(newInputs);
+  };
+
+  // Handle updates from PrincipalInputForm
+  const handlePrincipalUpdate = (newPrincipal) => {
+    saveToUndoStack();
+    const currentLoanRate = inputs.loanRate;
+    const currentBonusRate = inputs.premium ? (inputs.firstYearBonus / inputs.premium) * 100 : 0;
+    const denominator = 1 - (currentLoanRate / 100) - (currentBonusRate / 100);
+    const newPremium = denominator !== 0 ? Math.round(newPrincipal / denominator) : inputs.premium;
+    const newFirstYearBonus = Math.round((newPremium * currentBonusRate) / 100);
+    const newLoanAmount = Math.round((newPremium * currentLoanRate) / 100);
+
+    setInputs((prev) => ({
+      ...prev,
+      premium: newPremium,
+      firstYearBonus: newFirstYearBonus,
+      principal: newPrincipal,
+      loanAmount: newLoanAmount,
+    }));
+    setPrincipalDialogOpen(false);
   };
 
   // Toggle loan rate between zero and saved value
@@ -314,18 +304,36 @@ const PremiumInput = ({ inputs, setInputs, currencySwitch, saveToUndoStack,appBa
               />
             </Box>
 
-            {/* Principal Input */}
-            <Box>
+            {/* Principal Input with Edit Icon */}
+            <Box position="relative">
+              <IconButton
+                sx={{
+                  position: 'absolute',
+                  top: 0,
+                  right: 0,
+                  p: '5px',
+                  zIndex: 1,
+                  cursor: currencySwitch ? 'not-allowed' : 'pointer',
+                }}
+                onClick={(event) => {
+                  if (!currencySwitch) {
+                    setPrincipalDialogOpen(true);
+                    event.currentTarget.blur();
+                  }
+                }}
+                disabled={currencySwitch}
+              >
+                <EditIcon fontSize="small" />
+              </IconButton>
               <TextField
                 fullWidth
                 label={t("Principal")}
                 variant="standard"
                 value={formatCurrency(inputs.principal)}
-                onChange={handleDirectEdit('principal')}
                 InputLabelProps={{
                   sx: { fontSize: '22px', fontWeight: 'bold' },
                 }}
-                InputProps={{ readOnly: currencySwitch }}
+                InputProps={{ readOnly: true }} // Always read-only
                 sx={{
                   '& .MuiInputBase-input.Mui-disabled': {
                     WebkitTextFillColor: 'inherit',
@@ -357,6 +365,16 @@ const PremiumInput = ({ inputs, setInputs, currencySwitch, saveToUndoStack,appBa
           onClose={() => setBonusDialogOpen(false)}
           currentRate={firstYearBonusRate}
           onSave={handleBonusRateUpdate}
+        />
+      )}
+
+      {/* Principal Input Form Dialog */}
+      {principalDialogOpen && (
+        <PrincipalInputForm
+          open={principalDialogOpen}
+          onClose={() => setPrincipalDialogOpen(false)}
+          currentPrincipal={inputs.principal}
+          onSave={handlePrincipalUpdate}
         />
       )}
     </Box>

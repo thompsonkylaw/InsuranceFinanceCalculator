@@ -2,7 +2,7 @@ import React from 'react';
 import { DialogTitle, DialogContent, DialogActions, Button, Box } from '@mui/material';
 
 const Setting = ({ setAppBarColor, onClose }) => {
-  const colors = ['green', 'red', 'yellow', 'blue', 'black'];
+  const colors = [' #009739', '#E4002B', ' #FFCD00', ' #00008F', '  #004A9F','#ed1b2e'];
 
   const handleColorSelect = (color) => {
     setAppBarColor(color);

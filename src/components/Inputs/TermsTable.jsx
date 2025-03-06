@@ -56,13 +56,13 @@ const TermsTable = ({ termsAndCashValue, premiumInput, bankInterest, tableData, 
 
   const headerColors = [
     'grey',
-    'rgb(57, 102, 248)',
-    'rgb(255, 192, 0)',
-    'rgb(102, 94, 255)',
-    'rgb(62, 199, 248)',
-    'rgb(15, 175, 63)'
+    'rgb(38, 70, 83)',
+   'rgb(244, 162, 97)',
+   'rgb(0, 204, 102)',
+     'rgb(233, 196, 106)',
+     'rgb(42, 157, 143)',
   ];
-
+  
   const termsData = termsAndCashValue.term.map((term, index) => ({
     term,
     cashValue: termsAndCashValue.cashValue[index] || 0,
