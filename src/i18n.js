@@ -59,6 +59,9 @@ i18next
           Redo: 'redo',
           First_Year_Bonus_Rate: 'First Year Bonus Ratio',
           Bonus_Rate: 'Bonus Ratio',
+          editPrincipal: "Enter Principal",
+          principalCannotBeZero: 'Principal Cannot Be 0',
+         
         }
       },
       "zh-HK": {
@@ -110,6 +113,8 @@ i18next
           Redo: 'redo',
           First_Year_Bonus_Rate: '首年優惠比率',
           Bonus_Rate: '優惠比率',
+          editPrincipal: "輸入本金",
+          principalCannotBeZero: '輸入本金不能為0',
           
           
         }
@@ -163,6 +168,8 @@ i18next
           Redo: 'redo',
           First_Year_Bonus_Rate: '首年优惠比率',
           Bonus_Rate: '优惠比率',
+          editPrincipal: "输入本金",
+          principalCannotBeZero: '输入本金不能为0'
         }
       }
     }

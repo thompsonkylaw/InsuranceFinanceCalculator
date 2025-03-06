@@ -47,7 +47,7 @@ const PrincipalInputForm = ({ open, onClose, currentPrincipal, onSave }) => {
       <DialogTitle>{t('editPrincipal')}</DialogTitle>
       <DialogContent>
         <TextField
-          label={t('principal')}
+          label={t('Principal')}
           value={inputValue}
           onChange={handleInputChange}
           fullWidth
@@ -57,9 +57,9 @@ const PrincipalInputForm = ({ open, onClose, currentPrincipal, onSave }) => {
         <Typography color="error">{t('principalCannotBeZero')}</Typography>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>{t('cancel')}</Button>
+        <Button onClick={onClose}>{t('Cancel')}</Button>
         <Button onClick={handleSave} disabled={parseCurrency(inputValue) === 0}>
-          {t('save')}
+          {t('Paste')}
         </Button>
       </DialogActions>
     </Dialog>
