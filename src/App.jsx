@@ -147,7 +147,9 @@ const App = () => {
       <CssBaseline />
       <AppBar position="static" sx={{ backgroundColor: appBarColor }}>
         <Toolbar>
-          <IconButton edge="start" color="inherit" aria-label="back">
+          <IconButton edge="start" color="inherit" aria-label="back" onClick={() => {
+                window.location.href = "https://portal.aimarketings.io/tool-list/";
+              }}>
             <ArrowBackIcon />
           </IconButton>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
